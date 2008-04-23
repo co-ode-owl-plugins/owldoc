@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+
+<plugin>
+    <!-- HTML viewer - for showing javadoc for currently selected entity -->
+
+    <extension id="OWLDocView"
+               point="org.protege.editor.core.application.ViewComponent">
+        <label value="OWLDoc"/>
+        <class value="org.coode.browser.protege.OWLDocView"/>
+    </extension>
+
+    <!--<extension plugin-id="org.protege.editor.core.application" point-id="ViewComponent" id="org.coode.browser.LookupView">-->
+        <!--<label" value="Lookup"/>-->
+        <!--<class" value="org.coode.browser.protege.LookupView"/>-->
+    <!--</extension>-->
+
+    <extension id="OWLDocExportAction"
+               point="org.protege.editor.core.application.EditorKitMenuAction">
+        <name value="Export OWLDoc..."/>
+        <class value="org.coode.browser.protege.ExportOWLDocAction"/>
+        <toolTip value="Export OWLDoc for the active ontologies"/>
+        <path value="org.protege.editor.owl.menu.tools/SlotH-A"/>
+        <editorKitId value="OWLEditorKit"/>
+    </extension>
+
+    <!--<extension plugin-id="org.protege.editor.core.application" point-id="EditorKitMenuAction" id="org.coode.browser.LookupAction">-->
+        <!--<name" value="Lookup..."/>-->
+        <!--<class" value="org.coode.browser.protege.LookupAction"/>-->
+        <!--<toolTip" value="Look the current entity up on the web"/>-->
+        <!--<path" value="org.protege.editor.owl.menu.tools/SlotG-B"/>-->
+        <!--<editorKitId" value="OWLEditorKit"/>-->
+        <!--<accelerator" value="I"/>-->
+    <!--</extension>-->
+
+</plugin>

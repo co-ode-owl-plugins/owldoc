@@ -1,0 +1,18 @@
+body {font-family: Verdana, Arial, sans-serif; font-size: 10pt; padding: 5px;}
+
+img {border: none;}
+
+h1 {margin-top: 5px; font-size: 14pt; font-weight: bold;}
+h2 {margin-top: 5px; margin-bottom: 3px; font-size: 12pt; font-weight: normal;}
+
+/* below to remove some stuff from wikipedia  - does not work in java */
+.portlet {display: none; visibility: hidden; height: 0; width: 0;}
+
+a {text-decoration: none; color: black;}
+a:hover {text-decoration: underline; color: blue;}
+
+a.subsexpand {color: #555555; font-size: 7pt; text-decoration: underline; line-height: 180%;}
+
+/*ul {margin: 1px; padding-left: 10px; list-style-type: none;}*/
+
+/*#superclasses ul {list-style: circle; color: #aaaa00;}*/
