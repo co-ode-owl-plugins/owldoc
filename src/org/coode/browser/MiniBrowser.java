@@ -1,6 +1,7 @@
 package org.coode.browser;
 
 import org.protege.editor.core.ui.util.Icons;
+import org.protege.editor.core.ui.util.NativeBrowserLauncher;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -286,7 +287,7 @@ public class MiniBrowser extends JComponent{
 
         launchAction = new AbstractAction("Open in browser", Icons.getIcon("object.find.gif")) {
             public void actionPerformed(ActionEvent actionEvent) {
-                NativeBrowserLaunch.openURL(history.peek().toString());
+                NativeBrowserLauncher.openURL(history.peek().toString());
             }
         };
 

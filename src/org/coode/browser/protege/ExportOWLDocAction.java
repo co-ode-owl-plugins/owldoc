@@ -1,9 +1,9 @@
 package org.coode.browser.protege;
 
-import org.apache.log4j.Logger;
-import org.coode.browser.NativeBrowserLaunch;
 import org.coode.html.OWLHTMLServer;
 import org.coode.html.OntologyExporter;
+import org.protege.editor.core.ProtegeApplication;
+import org.protege.editor.core.ui.util.NativeBrowserLauncher;
 import org.protege.editor.core.ui.util.UIUtil;
 import org.protege.editor.owl.ui.action.ProtegeOWLAction;
 
@@ -44,6 +44,7 @@ import java.io.File;
  * <p/>
  */
 public class ExportOWLDocAction extends ProtegeOWLAction {
+    
     public void actionPerformed(ActionEvent actionEvent) {
         try {
             File folder = UIUtil.chooseFolder(getOWLWorkspace(), "Select a base for OWLDoc");
@@ -51,12 +52,11 @@ public class ExportOWLDocAction extends ProtegeOWLAction {
                 OWLHTMLServer svr = new ProtegeOntologyServer(getOWLModelManager());
                 OntologyExporter exporter = new OntologyExporter(svr);
                 File index = exporter.export(folder);
-                NativeBrowserLaunch.openURL("file://" + index.getPath());
+                NativeBrowserLauncher.openURL("file://" + index.getPath());
             }
         }
         catch (Throwable e) {
-            e.printStackTrace();
-            Logger.getLogger(ExportOWLDocAction.class).error(e);
+            ProtegeApplication.getErrorLog().handleError(Thread.currentThread(), e);            
         }
     }
 

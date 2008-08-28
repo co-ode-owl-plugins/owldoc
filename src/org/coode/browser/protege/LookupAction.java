@@ -1,7 +1,7 @@
 package org.coode.browser.protege;
 
-import org.protege.editor.owl.ui.action.ProtegeOWLAction;
 import org.protege.editor.owl.model.OWLWorkspace;
+import org.protege.editor.owl.ui.action.ProtegeOWLAction;
 
 import java.awt.event.ActionEvent;
 
@@ -40,7 +40,7 @@ import java.awt.event.ActionEvent;
  */
 public class LookupAction extends ProtegeOWLAction {
     public void actionPerformed(ActionEvent actionEvent) {
-        getOWLEditorKit().getOWLWorkspace().showResultsView("org.coode.browser.LookupView",
+        getOWLEditorKit().getWorkspace().showResultsView("org.coode.browser.LookupView",
                                                             true, OWLWorkspace.BOTTOM_RESULTS_VIEW);
     }
 

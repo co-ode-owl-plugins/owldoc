@@ -1,8 +1,9 @@
 package org.coode.browser.protege;
 
-import org.apache.log4j.Logger;
+import org.protege.editor.core.ProtegeApplication;
 import org.protege.editor.owl.ui.UIHelper;
 import org.semanticweb.owl.model.OWLEntity;
+import org.semanticweb.owl.model.OWLNamedObject;
 
 import javax.swing.*;
 import java.awt.*;
@@ -48,8 +49,6 @@ import java.util.Map;
  */
 public class LookupView extends AbstractBrowserView {
 
-    private static final Logger logger = Logger.getLogger(LookupView.class);
-
     private static final String PROTEGE_DEFAULT_CSS = "resources/protege-default.css";
 
     private static final String[] DEFAULT_LABELS = {
@@ -87,7 +86,7 @@ public class LookupView extends AbstractBrowserView {
                         }
                     }
                     catch (Exception e) {
-                        logger.error(e);
+                        ProtegeApplication.getErrorLog().handleError(Thread.currentThread(), e);                        
                     }
                 }
                 refresh(getOWLWorkspace().getOWLSelectionModel().getSelectedEntity());
@@ -123,12 +122,12 @@ public class LookupView extends AbstractBrowserView {
         resourceCombo.removeItemListener(itemListener);
     }
 
-    protected void refresh(OWLEntity entity) {
-        if (entity != null){
+    protected void refresh(OWLNamedObject entity) {
+        if (entity != null && entity instanceof OWLEntity){
             String base = map.get(resourceCombo.getSelectedItem());
             final URL query;
             try {
-                String entityRendering = getOWLModelManager().getOWLEntityRenderer().render(entity);
+                String entityRendering = getOWLModelManager().getRendering(entity);
                 entityRendering = entityRendering.replaceAll(" ", "%20"); // in case the renderer does not do this
                 entityRendering = entityRendering.replaceAll("_", "%20"); // in case the renderer does not do this
                 // @@TODO separate camel notation based on caps
@@ -167,8 +166,7 @@ public class LookupView extends AbstractBrowserView {
                 getBrowser().setURL(query);
             }
             catch (Exception e) {
-                e.printStackTrace();
-                logger.error(e);
+                ProtegeApplication.getErrorLog().handleError(Thread.currentThread(), e);
             }
         }
     }

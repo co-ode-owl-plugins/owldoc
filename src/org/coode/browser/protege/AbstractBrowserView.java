@@ -6,8 +6,8 @@ import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
 import org.protege.editor.owl.model.selection.OWLSelectionModelListener;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
-import org.semanticweb.owl.model.OWLEntity;
 import org.semanticweb.owl.model.OWLException;
+import org.semanticweb.owl.model.OWLNamedObject;
 import org.semanticweb.owl.model.OWLOntologyChange;
 import org.semanticweb.owl.model.OWLOntologyChangeListener;
 
@@ -105,5 +105,5 @@ public abstract class AbstractBrowserView extends AbstractOWLViewComponent {
         return browser;
     }
 
-    protected abstract void refresh(OWLEntity entity);
+    protected abstract void refresh(OWLNamedObject entity);
 }

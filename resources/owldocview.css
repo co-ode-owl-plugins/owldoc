@@ -56,7 +56,7 @@ img.button {position: relative; top: 8px;}
 .max {color: #770077;}
 .exactly {color: #770077;}
 
-.codebox {border-width: 1px; border-style: solid; border-color: #c7cfd5; background: #f1f5f9; width: 95%; padding: 5px;}
+div {border-width: 1px; border-style: solid; border-color: #c7cfd5; background: #f1f5f9; width: 95%; padding: 5px;}
 
 #queryform {background: #ddddff; padding: 5px;}
 

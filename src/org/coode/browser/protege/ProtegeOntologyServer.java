@@ -1,18 +1,16 @@
 package org.coode.browser.protege;
 
 import org.apache.log4j.Logger;
-import org.coode.html.OWLHTMLConstants;
 import org.coode.html.OWLHTMLServer;
-import org.coode.html.url.OWLDocURLMapper;
-import org.coode.html.url.URLMapper;
-import org.coode.owl.mngr.MyShortformProvider;
-import org.coode.owl.mngr.OWLDescriptionParser;
-import org.coode.owl.mngr.OWLNameMapper;
-import org.coode.owl.mngr.OWLServerListener;
+import org.coode.html.impl.OWLHTMLConstants;
+import org.coode.html.url.StaticFilesURLScheme;
+import org.coode.html.url.URLScheme;
+import org.coode.owl.mngr.*;
+import org.coode.owl.mngr.impl.OWLNamedObjectFinderImpl;
+import org.coode.owl.mngr.impl.ServerPropertiesImpl;
+import org.coode.owl.mngr.impl.ToldPropertyHierarchyReasoner;
 import org.coode.owl.util.OWLObjectComparator;
 import org.protege.editor.owl.model.OWLModelManager;
-import org.protege.editor.owl.model.inference.NoOpReasoner;
-import org.semanticweb.owl.inference.OWLClassReasoner;
 import org.semanticweb.owl.inference.OWLReasoner;
 import org.semanticweb.owl.inference.OWLReasonerException;
 import org.semanticweb.owl.model.*;
@@ -22,10 +20,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /*
  * Copyright (C) 2007, University of Manchester
@@ -76,27 +71,36 @@ public class ProtegeOntologyServer implements OWLHTMLServer {
 
     private OWLModelManager mngr;
 
-    private OWLClassReasoner toldClassReasoner;
-
     private OWLObjectComparator<OWLObject> comp;
 
-    private URLMapper urlMapper;
+    private URLScheme urlScheme;
 
     private OWLNameMapper nameMapper;
 
     private ToldClassHierarchyReasoner toldClassHierarchyReasoner;
 
-    private MyShortformProvider shortformProvider;
-    
-    private Map<String, String> options = new HashMap<String, String>();
+    private ToldPropertyHierarchyReasoner toldPropertyHierarchyProvider;
+
+    private NamedObjectShortFormProvider shortformProvider;
+
+    private String label;
+
+    private Map<String, OWLDescriptionParser> parserMap = new HashMap<String, OWLDescriptionParser>();
+
+    private ServerProperties properties;
+
+    private OWLNamedObjectFinder finder;
+
 
     public ProtegeOntologyServer(OWLModelManager mngr) {
         this.mngr = mngr;
-        options.put(OWLHTMLConstants.OPTION_CONTENT_WINDOW, "content");
-    }
+        properties = new ServerPropertiesImpl();
+        properties.set(OWLHTMLConstants.OPTION_CONTENT_WINDOW, OWLHTMLConstants.LinkTarget.content.toString());
+        properties.set(OWLHTMLConstants.OPTION_INDEX_ALL_URL, OWLHTMLConstants.DEFAULT_INDEX_ALL_URL);
+        properties.set(OWLHTMLConstants.OPTION_DEFAULT_CSS, OWLHTMLConstants.CSS_DEFAULT);
+        properties.set(OWLHTMLConstants.OPTION_SHOW_MINI_HIERARCHIES, ServerConstants.TRUE);
+        properties.set(OWLHTMLConstants.OPTION_RENDER_SUBS, ServerConstants.TRUE);
 
-    public Map<String, String> getOptions() {
-        return options;
     }
 
     public String getID() {
@@ -140,22 +144,14 @@ public class ProtegeOntologyServer implements OWLHTMLServer {
         return toldClassHierarchyReasoner;
     }
 
-    public OWLClassReasoner getOWLClassReasoner() {
-        OWLClassReasoner r = mngr.getReasoner();
-        if (r instanceof NoOpReasoner){
-            if (toldClassReasoner == null){
-                toldClassReasoner = new ToldClassHierarchyReasoner(mngr.getOWLOntologyManager());
-                try {
-                    toldClassReasoner.loadOntologies(mngr.getActiveOntologies());
-                }
-                catch (OWLReasonerException e) {
-                    Logger.getLogger(ProtegeOntologyServer.class).error(e);
-                }
-            }
-            r = toldClassReasoner;
+
+    public ToldPropertyHierarchyReasoner getPropertyHierarchyProvider() {
+        if (toldPropertyHierarchyProvider == null){
+            toldPropertyHierarchyProvider = new ToldPropertyHierarchyReasoner(mngr.getOWLOntologyManager());
         }
-        return r;
+        return toldPropertyHierarchyProvider;
     }
+
 
     public Comparator<OWLObject> getComparator() {
         if (comp == null){
@@ -164,12 +160,57 @@ public class ProtegeOntologyServer implements OWLHTMLServer {
         return comp;
     }
 
-    public URLMapper getURLMapper() {
-        if (urlMapper == null){
-            urlMapper = new OWLDocURLMapper(this, DEFAULT_BASE);
+
+    public OWLNamedObjectFinder getFinder() {
+        if (finder == null){
+            finder = new OWLNamedObjectFinderImpl(getNameMapper(), this){
+                public Set<? extends OWLNamedObject> getOWLNamedObjects(String s, NamedObjectType type) {
+                    switch(type){
+                        case classes: return Collections.singleton(mngr.getOWLClass(s));
+                        case objectproperties: return Collections.singleton(mngr.getOWLObjectProperty(s));
+                        case dataproperties: return Collections.singleton(mngr.getOWLDataProperty(s));
+                        case individuals: return Collections.singleton(mngr.getOWLIndividual(s));
+                    }
+                    return Collections.emptySet();
+                }
+            };
         }
-        return urlMapper;
+        return finder;
     }
+
+
+    public URLScheme getURLScheme() {
+        if (urlScheme == null){
+            urlScheme = new StaticFilesURLScheme(this);
+        }
+        return urlScheme;
+    }
+
+
+    public void setURLScheme(URLScheme urlScheme) {
+        this.urlScheme = urlScheme;
+    }
+
+
+    public Set<OWLOntology> getVisibleOntologies() {
+        return mngr.getActiveOntologies();
+    }
+
+
+    public void setOntologyVisible(OWLOntology owlOntology, boolean b) {
+        throw new NotImplementedException(); // we never ask to hide certain ontologies
+    }
+
+
+    public void setCurrentLabel(String string) {
+        label = string;
+    }
+
+
+    public String getCurrentLabel() {
+        return label;
+    }
+
 
     public OWLNameMapper getNameMapper() {
         if (nameMapper == null){
@@ -182,19 +223,59 @@ public class ProtegeOntologyServer implements OWLHTMLServer {
         return DEFAULT_BASE;
     }
 
-    public MyShortformProvider getNameRenderer() {
+    public NamedObjectShortFormProvider getNameRenderer() {
         if (shortformProvider == null){
             shortformProvider = new ProtegeShortformProviderWrapper(mngr);
         }
         return shortformProvider;
     }
 
-    public void setNameRenderer(MyShortformProvider sfp) {
-        shortformProvider = sfp;
+
+    public OWLDescriptionParser getDescriptionParser(String string) {
+        return parserMap.get(string);
     }
 
-    public OWLDescriptionParser getDescriptionParser() {
-        throw new NotImplementedException();
+
+    public void registerDescriptionParser(String string, OWLDescriptionParser owlDescriptionParser) {
+        parserMap.put(string, owlDescriptionParser);
+    }
+
+
+    public Set<String> getSupportedSyntaxes() {
+        return parserMap.keySet();
+    }
+
+
+    public ServerProperties getProperties() {
+        return properties;
+    }
+
+
+    public void clear() {
+        if (nameMapper != null){
+            nameMapper.dispose();
+            nameMapper = null;
+        }
+        if (shortformProvider != null){
+            shortformProvider.dispose();
+            shortformProvider = null;
+        }
+        if (toldClassHierarchyReasoner != null){
+            toldClassHierarchyReasoner.dispose();
+            toldClassHierarchyReasoner = null;
+        }
+        if (toldPropertyHierarchyProvider != null){
+            try {
+                toldPropertyHierarchyProvider.dispose();
+            }
+            catch (OWLReasonerException e) {
+                e.printStackTrace();
+            }
+            toldPropertyHierarchyProvider = null;
+        }
+
+        urlScheme = null;
+        comp = null;
     }
 
     public void loadOntology(URI ontPhysicalURI) throws OWLOntologyCreationException {
@@ -205,6 +286,12 @@ public class ProtegeOntologyServer implements OWLHTMLServer {
         mngr.getOWLOntologyManager().removeOntology(uri);
     }
 
+
+    public void clearOntologies() {
+        throw new NotImplementedException();
+    }
+
+
     public void removeServerListener(OWLServerListener owlServerListener) {
         throw new NotImplementedException();
     }
@@ -214,12 +301,19 @@ public class ProtegeOntologyServer implements OWLHTMLServer {
     }
 
     public void dispose() {
-        //@@TODO implement
+        clear();
     }
 
-    class ProtegeOWLEntityRenderer implements MyShortformProvider{
-        public String render(OWLNamedObject obj) {
-            return mngr.getRendering(obj);
+    class ProtegeOWLEntityRenderer implements NamedObjectShortFormProvider{
+        public String getShortForm(OWLNamedObject owlNamedObject) {
+            return mngr.getRendering(owlNamedObject);
+        }
+
+        public String getShortForm(OWLEntity owlEntity) {
+            return mngr.getRendering(owlEntity);
+        }
+
+        public void dispose() {
         }
     }
 }

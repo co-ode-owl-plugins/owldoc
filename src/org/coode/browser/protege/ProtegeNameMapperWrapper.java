@@ -1,13 +1,11 @@
 package org.coode.browser.protege;
 
-import org.coode.html.OWLHTMLConstants;
+import org.coode.owl.mngr.NamedObjectType;
 import org.coode.owl.mngr.OWLNameMapper;
 import org.protege.editor.owl.model.OWLModelManager;
-import org.semanticweb.owl.model.*;
+import org.semanticweb.owl.model.OWLNamedObject;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 /*
@@ -52,83 +50,83 @@ public class ProtegeNameMapperWrapper implements OWLNameMapper {
         this.mngr = mngr;
     }
 
-    public Set<OWLEntity> getOWLEntities(String name) {
-        Set<OWLEntity> entities = new HashSet<OWLEntity>();
-        entities.add(mngr.getOWLClass(name));
-        entities.add(mngr.getOWLObjectProperty(name));
-        entities.add(mngr.getOWLDataProperty(name));
-        entities.add(mngr.getOWLIndividual(name));
-        return entities;
-    }
-
-    public Set<OWLDataType> getOWLDatatypes(String string) {
-        return new HashSet<OWLDataType>(mngr.getMatchingOWLDataTypes(string));
-    }
-
-    public Set<OWLOntology> getOWLOntologies(String string) {
-        throw new NotImplementedException();
-    }
-
-    public Set<OWLNamedObject> getOWLNamedObjects(String string, String string1) {
-        throw new NotImplementedException();
-    }
-
-    public Set<OWLNamedObject> getOWLNamedObjects(String string, String string1, String string2, String string3) {
-        throw new NotImplementedException();
-    }
-
-    public Set<OWLNamedObject> getNamedObjects(String uri, String name, String baseURI, String type) {
-        String searchStr = uri;
-        if (searchStr == null){
-            searchStr = name;
-            if (searchStr != null && baseURI != null){
-                searchStr = baseURI + "#" + searchStr;
-            }
-        }
-
-        if (searchStr != null){
-            if (type.equals(OWLHTMLConstants.CLASSES)){
-                return new HashSet<OWLNamedObject>(getOWLClasses(searchStr));
-            }
-            else if (type.equals(OWLHTMLConstants.OBJECTPROPERTIES)){
-                return new HashSet<OWLNamedObject>(getOWLObjectProperties(searchStr));
-            }
-            else if (type.equals(OWLHTMLConstants.DATAPROPERTIES)){
-                return new HashSet<OWLNamedObject>(getOWLDataProperties(searchStr));
-            }
-            else if (type.equals(OWLHTMLConstants.INDIVIDUALS)){
-                return new HashSet<OWLNamedObject>(getOWLIndividuals(searchStr));
-            }
-            else{
-                return new HashSet<OWLNamedObject>(getOWLEntities(searchStr));
-            }
-        }
-        return Collections.EMPTY_SET;
-    }
-
-    public Set<OWLClass> getOWLClasses(String name) {
-        return Collections.singleton(mngr.getOWLClass(name));
-    }
-
-    public Set<OWLObjectProperty> getOWLObjectProperties(String name) {
-        return Collections.singleton(mngr.getOWLObjectProperty(name));
-    }
-
-    public Set<OWLDataProperty> getOWLDataProperties(String name) {
-        return Collections.singleton(mngr.getOWLDataProperty(name));
-    }
-
-    public Set<OWLProperty> getOWLProperties(String name) {
-        OWLProperty prop = mngr.getOWLObjectProperty(name);
-        if (prop == null){
-            prop = mngr.getOWLDataProperty(name);
-        }
-        return Collections.singleton(prop);
-    }
-
-    public Set<OWLIndividual> getOWLIndividuals(String name) {
-        return Collections.singleton(mngr.getOWLIndividual(name));
-    }
+//    public Set<OWLEntity> getOWLEntities(String name) {
+//        Set<OWLEntity> entities = new HashSet<OWLEntity>();
+//        entities.add(mngr.getOWLClass(name));
+//        entities.add(mngr.getOWLObjectProperty(name));
+//        entities.add(mngr.getOWLDataProperty(name));
+//        entities.add(mngr.getOWLIndividual(name));
+//        return entities;
+//    }
+//
+//    public Set<OWLDataType> getOWLDatatypes(String string) {
+//        return new HashSet<OWLDataType>(mngr.getMatchingOWLDataTypes(string));
+//    }
+//
+//    public Set<OWLOntology> getOWLOntologies(String string) {
+//        throw new NotImplementedException();
+//    }
+//
+//    public Set<OWLNamedObject> getOWLNamedObjects(String string, String string1) {
+//        throw new NotImplementedException();
+//    }
+//
+//    public Set<OWLNamedObject> getOWLNamedObjects(String string, String string1, String string2, String string3) {
+//        throw new NotImplementedException();
+//    }
+//
+//    public Set<OWLNamedObject> getNamedObjects(String uri, String name, String baseURI, String type) {
+//        String searchStr = uri;
+//        if (searchStr == null){
+//            searchStr = name;
+//            if (searchStr != null && baseURI != null){
+//                searchStr = baseURI + "#" + searchStr;
+//            }
+//        }
+//
+//        if (searchStr != null){
+//            if (type.equals(NamedObjectType.classes)){
+//                return new HashSet<OWLNamedObject>(getOWLClasses(searchStr));
+//            }
+//            else if (type.equals(NamedObjectType.objectproperties)){
+//                return new HashSet<OWLNamedObject>(getOWLObjectProperties(searchStr));
+//            }
+//            else if (type.equals(NamedObjectType.dataproperties)){
+//                return new HashSet<OWLNamedObject>(getOWLDataProperties(searchStr));
+//            }
+//            else if (type.equals(NamedObjectType.individuals)){
+//                return new HashSet<OWLNamedObject>(getOWLIndividuals(searchStr));
+//            }
+//            else{
+//                return new HashSet<OWLNamedObject>(getOWLEntities(searchStr));
+//            }
+//        }
+//        return Collections.EMPTY_SET;
+//    }
+//
+//    public Set<OWLClass> getOWLClasses(String name) {
+//        return Collections.singleton(mngr.getOWLClass(name));
+//    }
+//
+//    public Set<OWLObjectProperty> getOWLObjectProperties(String name) {
+//        return Collections.singleton(mngr.getOWLObjectProperty(name));
+//    }
+//
+//    public Set<OWLDataProperty> getOWLDataProperties(String name) {
+//        return Collections.singleton(mngr.getOWLDataProperty(name));
+//    }
+//
+//    public Set<OWLProperty> getOWLProperties(String name) {
+//        OWLProperty prop = mngr.getOWLObjectProperty(name);
+//        if (prop == null){
+//            prop = mngr.getOWLDataProperty(name);
+//        }
+//        return Collections.singleton(prop);
+//    }
+//
+//    public Set<OWLIndividual> getOWLIndividuals(String name) {
+//        return Collections.singleton(mngr.getOWLIndividual(name));
+//    }
 
     public Set<String> getClassNames() {
         throw new NotImplementedException();
@@ -153,6 +151,21 @@ public class ProtegeNameMapperWrapper implements OWLNameMapper {
     public Set<String> getOntologyNames() {
         throw new NotImplementedException();
     }
+
+    public Set<String> getEntityNames() {
+        throw new NotImplementedException();
+    }
+
+
+    public Set<String> getNames(NamedObjectType type) {
+        throw new NotImplementedException();
+    }
+
+
+    public <T extends OWLNamedObject> void get(String string, Set<T> set, NamedObjectType namedObjectType) {
+        throw new NotImplementedException();
+    }
+
 
     public void dispose() {
         //@@TODO implement
