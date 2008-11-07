@@ -1,5 +1,0 @@
-<plugin version="1.0.5.owldoc">
-	<download url="http://co-ode-owl-plugins.googlecode.com/files/org.coode.owldoc_1_0_5.zip"/>
- 	<website url="http://www.co-ode.org/downloads/protege-x/plugins/#browser"/>
-	<readme url="http://www.co-ode.org/downloads/protege-x/readme.txt"/>
-</plugin>

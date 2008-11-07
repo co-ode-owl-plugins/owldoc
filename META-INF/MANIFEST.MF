@@ -6,10 +6,11 @@ Bundle-Category: protege
 Bundle-Description: OWLDoc export and view
 Bundle-Vendor: The CO-ODE Group
 Bundle-DocURL: http://www.co-ode.org
+Update-Url: http://co-ode-owl-plugins.googlecode.com/svn/trunk/org.coode.owldoc/update.properties
 Bundle-ClassPath: .,lib/owlhtml.jar,lib/owlmanager.jar
 Import-Package: org.osgi.framework,
  org.apache.log4j
-Bundle-Version: 1.0.5
+Bundle-Version: 1.0.6
 Bundle-Activator: org.protege.editor.core.plugin.DefaultPluginActivator
 Require-Bundle: org.eclipse.equinox.registry,
  org.eclipse.equinox.common,
