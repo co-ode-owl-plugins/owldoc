@@ -1,5 +1,6 @@
 <html>
 <body>
+<h2>OWLDoc</h2>
 <p>The first rewrite of the popular OWLDoc tool that now has both an export to
  HTML and a dynamic view that allows you to browse from within Protégé.
  OWL1.1 is supported and full use is made of the highly optimised OWLAPI Usage model.
