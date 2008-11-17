@@ -1,15 +1,24 @@
-The first rewrite of the popular OWLDoc tool that now has both an export to HTML and a dynamic view that allows you to browse from within Protégé. OWL1.1 is supported and full use is made of the highly optimised OWLAPI Usage model. All links navigate to the appropriate resource. Further features (including a server version with search/query support) are under development.
+<html>
+<body>
+<p>The first rewrite of the popular OWLDoc tool that now has both an export to
+ HTML and a dynamic view that allows you to browse from within Protégé.
+ OWL1.1 is supported and full use is made of the highly optimised OWLAPI Usage model.
+ All links navigate to the appropriate resource. Further features
+ (including a server version with search/query support) are under development.
 
-Find the OWLDoc View under the View-Misc views menu. An HTML presentation of the last selected class, property or individual will be displayed as you browse. Updates to the ontology are reflected immediately.
+<p>Find the OWLDoc View under the <b>View | Misc views</b> menu.
+<br>An HTML presentation of the last selected class, property or individual will be displayed as you browse.
+Updates to the ontology are reflected immediately.
 
-OWLDoc export is in the Tools menu - just provide a directory to export to and a browser will open when it finishes. OWLDoc will create a bundle of (mostly) static HTML pages for publishing to the web or distributing to colleagues (a small amount of javascript is used to create a fragment of the class hierarchy on each class summary page).
+<p>OWLDoc export is in the <b>Tools</b> menu
+<br>Provide a directory to export to and a browser will open when it finishes. OWLDoc will create a bundle of (mostly) static HTML pages for publishing to the web or distributing to colleagues (a small amount of javascript is used to create a fragment of the class hierarchy on each class summary page).
 
+<p><a href="http://code.google.com/p/co-ode-owl-plugins/wiki/OWLDoc">Documentation</a>
 
-Version info
-------------
+<h3>Version info</h3>
 
-v1.0.6 (7th Nov 2008)
-- auto-update activated
+<h4>v1.0.6 (7th Nov 2008)</h4>
+<ul><li>auto-update activated</li></ul>
 
-
-See also: http://www.co-ode.org/downloads/protege-x/plugins/#browser
+</body>
+</html>
