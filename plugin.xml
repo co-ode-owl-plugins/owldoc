@@ -9,10 +9,11 @@
         <class value="org.coode.browser.protege.OWLDocView"/>
     </extension>
 
-    <!--<extension plugin-id="org.protege.editor.core.application" point-id="ViewComponent" id="org.coode.browser.LookupView">-->
-        <!--<label" value="Lookup"/>-->
-        <!--<class" value="org.coode.browser.protege.LookupView"/>-->
-    <!--</extension>-->
+    <extension id="LookupView"
+            point="org.protege.editor.core.application.ViewComponent">
+        <label value="Lookup"/>
+        <class value="org.coode.browser.protege.LookupView"/>
+    </extension>
 
     <extension id="OWLDocExportAction"
                point="org.protege.editor.core.application.EditorKitMenuAction">

@@ -18,6 +18,13 @@ Updates to the ontology are reflected immediately.
 
 <h3>Version info</h3>
 
+<h4>v1.0.7 (20th Feb 2009)</h4>
+<ul>
+<li>OWLDoc export handles multiple entities with the same URI fragment</li>
+<li>utf-8 output for OWLDoc export</li>
+<li>lookup view activated (alpha)</li>
+</ul>
+
 <h4>v1.0.6 (7th Nov 2008)</h4>
 <ul><li>auto-update activated</li></ul>
 

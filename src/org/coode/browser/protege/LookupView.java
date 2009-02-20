@@ -63,7 +63,7 @@ public class LookupView extends AbstractBrowserView {
             {"http://wordnet.princeton.edu/perl/webwn?s=",
              "http://en.wikipedia.org/wiki/",
              "http://www.google.com/search?q=",
-             "http://toy.lbl.gov:9002/cgi-bin/amigo/go.cgi?search_constraint=terms&amp;action=query&amp;view=query&amp;query=",
+             "http://amigo.geneontology.org/cgi-bin/amigo/search.cgi?action=new-search&amp;search_query=",
              //"http://amigo.geneontology.org/cgi-bin/amigo/go.cgi?search_constraint=terms&amp;action=query&amp;view=query&amp;query=",
              //"http://www.altavista.com/web/results?q=",
              ""};
