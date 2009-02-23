@@ -53,6 +53,7 @@ public class ExportOWLDocAction extends ProtegeOWLAction {
                 OntologyExporter exporter = new OntologyExporter(svr);
                 File index = exporter.export(folder);
                 NativeBrowserLauncher.openURL("file://" + index.getPath());
+                svr.dispose();
             }
         }
         catch (Throwable e) {

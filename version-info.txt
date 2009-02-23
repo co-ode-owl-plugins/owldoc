@@ -18,6 +18,11 @@ Updates to the ontology are reflected immediately.
 
 <h3>Version info</h3>
 
+<h4>v1.0.8 (23rd Feb 2009)</h4>
+<ul>
+<li>fixed OWLDoc export bug when exporting using labels/qnames</li>
+</ul>
+
 <h4>v1.0.7 (20th Feb 2009)</h4>
 <ul>
 <li>OWLDoc export handles multiple entities with the same URI fragment</li>
