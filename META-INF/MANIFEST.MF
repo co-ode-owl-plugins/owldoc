@@ -18,5 +18,4 @@ Require-Bundle: org.eclipse.equinox.registry,
  org.protege.editor.core.application,
  org.protege.editor.owl,
  org.semanticweb.owl.owlapi
-Export-Package:
- org.coode.browser
+Export-Package: org.coode.browser
