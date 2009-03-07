@@ -4,7 +4,6 @@ import org.coode.owl.mngr.NamedObjectType;
 import org.coode.owl.mngr.OWLNameMapper;
 import org.protege.editor.owl.model.OWLModelManager;
 import org.semanticweb.owl.model.OWLNamedObject;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Set;
 
@@ -129,41 +128,41 @@ public class ProtegeNameMapperWrapper implements OWLNameMapper {
 //    }
 
     public Set<String> getClassNames() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     public Set<String> getObjectPropertyNames() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     public Set<String> getDataPropertyNames() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     public Set<String> getIndividualNames() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     public Set<String> getDatatypeNames() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     public Set<String> getOntologyNames() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     public Set<String> getEntityNames() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
 
     public Set<String> getNames(NamedObjectType type) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
 
     public <T extends OWLNamedObject> void get(String string, Set<T> set, NamedObjectType namedObjectType) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
 
