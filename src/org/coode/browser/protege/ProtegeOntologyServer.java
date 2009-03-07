@@ -1,11 +1,27 @@
 package org.coode.browser.protege;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.coode.html.OWLHTMLServer;
 import org.coode.html.impl.OWLHTMLConstants;
 import org.coode.html.url.StaticFilesURLScheme;
 import org.coode.html.url.URLScheme;
-import org.coode.owl.mngr.*;
+import org.coode.owl.mngr.NamedObjectShortFormProvider;
+import org.coode.owl.mngr.NamedObjectType;
+import org.coode.owl.mngr.OWLDescriptionParser;
+import org.coode.owl.mngr.OWLNameMapper;
+import org.coode.owl.mngr.OWLNamedObjectFinder;
+import org.coode.owl.mngr.OWLServerListener;
+import org.coode.owl.mngr.ServerConstants;
+import org.coode.owl.mngr.ServerProperties;
 import org.coode.owl.mngr.impl.OWLNamedObjectFinderImpl;
 import org.coode.owl.mngr.impl.ServerPropertiesImpl;
 import org.coode.owl.mngr.impl.ToldPropertyHierarchyReasoner;
@@ -13,14 +29,13 @@ import org.coode.owl.util.OWLObjectComparator;
 import org.protege.editor.owl.model.OWLModelManager;
 import org.semanticweb.owl.inference.OWLReasoner;
 import org.semanticweb.owl.inference.OWLReasonerException;
-import org.semanticweb.owl.model.*;
+import org.semanticweb.owl.model.OWLEntity;
+import org.semanticweb.owl.model.OWLNamedObject;
+import org.semanticweb.owl.model.OWLObject;
+import org.semanticweb.owl.model.OWLOntology;
+import org.semanticweb.owl.model.OWLOntologyCreationException;
+import org.semanticweb.owl.model.OWLOntologyManager;
 import org.semanticweb.owl.util.ToldClassHierarchyReasoner;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.util.*;
 
 /*
  * Copyright (C) 2007, University of Manchester
@@ -198,7 +213,7 @@ public class ProtegeOntologyServer implements OWLHTMLServer {
 
 
     public void setOntologyVisible(OWLOntology owlOntology, boolean b) {
-        throw new NotImplementedException(); // we never ask to hide certain ontologies
+        throw new UnsupportedOperationException(); // we never ask to hide certain ontologies
     }
 
 
@@ -288,16 +303,16 @@ public class ProtegeOntologyServer implements OWLHTMLServer {
 
 
     public void clearOntologies() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
 
     public void removeServerListener(OWLServerListener owlServerListener) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     public void addServerListener(OWLServerListener owlServerListener) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     public void dispose() {
