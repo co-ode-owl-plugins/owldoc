@@ -18,6 +18,11 @@ Updates to the ontology are reflected immediately.
 
 <h3>Version info</h3>
 
+<h4>v1.0.9 (1st Apr 2009)</h4>
+<ul>
+<li>several fixes to the hierarchy generation</li>
+</ul>
+
 <h4>v1.0.8 (23rd Feb 2009)</h4>
 <ul>
 <li>fixed OWLDoc export bug when exporting using labels/qnames</li>
