@@ -3,6 +3,7 @@ package org.coode.browser.protege;
 import org.coode.html.OWLHTMLServer;
 import org.coode.html.OntologyExporter;
 import org.protege.editor.core.ProtegeApplication;
+import org.protege.editor.core.ui.progress.BackgroundTask;
 import org.protege.editor.core.ui.util.NativeBrowserLauncher;
 import org.protege.editor.core.ui.util.UIUtil;
 import org.protege.editor.owl.ui.action.ProtegeOWLAction;
@@ -44,20 +45,29 @@ import java.io.File;
  * <p/>
  */
 public class ExportOWLDocAction extends ProtegeOWLAction {
-    
+
     public void actionPerformed(ActionEvent actionEvent) {
-        try {
-            File folder = UIUtil.chooseFolder(getOWLWorkspace(), "Select a base for OWLDoc");
-            if (folder != null){
-                OWLHTMLServer svr = new ProtegeOntologyServer(getOWLModelManager());
-                OntologyExporter exporter = new OntologyExporter(svr);
-                File index = exporter.export(folder);
-                NativeBrowserLauncher.openURL("file://" + index.getPath());
-                svr.dispose();
-            }
-        }
-        catch (Throwable e) {
-            ProtegeApplication.getErrorLog().handleError(Thread.currentThread(), e);            
+        final File folder = UIUtil.chooseFolder(getOWLWorkspace(), "Select a base for OWLDoc");
+        if (folder != null){
+            final BackgroundTask exportTask = ProtegeApplication.getBackgroundTaskManager().startTask("Exporting OWLDoc");
+            Runnable export = new Runnable(){
+                public void run() {
+                    try {
+                        OWLHTMLServer svr = new ProtegeOntologyServer(getOWLModelManager());
+                        OntologyExporter exporter = new OntologyExporter(svr);
+                        File index = exporter.export(folder);
+                        ProtegeApplication.getBackgroundTaskManager().endTask(exportTask);
+                        NativeBrowserLauncher.openURL("file://" + index.getPath());
+                        svr.dispose();
+                    }
+                    catch (Throwable e) {
+                        ProtegeApplication.getErrorLog().handleError(Thread.currentThread(), e);
+                    }
+                }
+            };
+
+            Thread exportThread = new Thread(export, "Export OWLDoc");
+            exportThread.start();
         }
     }
 
