@@ -223,6 +223,27 @@
            todir = "${protege.plugins}"
            overwrite = "true"/>
    </target>
+
+   <target name = "run" depends="install">
+       <java fork = "true" 
+             dir = "${protege.home}" 
+             jar = "${protege.osgi}">
+           <jvmarg value = "-Dfile.encoding=UTF-8"/>
+           <jvmarg value = "-Xmx500M"/>
+           <jvmarg value = "-Dlog4j.configuration=file:log4j.xml"/>
+       </java>
+   </target>
+
+   <target name = "debug" depends="install">
+       <java fork = "true" 
+             dir = "${protege.home}" 
+             jar = "${protege.osgi}">
+           <jvmarg value = "-Xmx500M"/>
+           <jvmarg value = "-Dlog4j.configuration=file:log4j.xml"/>
+           <jvmarg value = "-Dfile.encoding=UTF-8"/>
+           <jvmarg value = "-Xrunjdwp:transport=dt_socket,address=8500,server=y,suspend=y"/> 
+       </java>
+   </target>
 	
    <target name = "clean">
      <delete dir = "${build}"/>
