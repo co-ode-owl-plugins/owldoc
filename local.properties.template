@@ -1,0 +1,7 @@
+#
+# If the whole co-ode tree is checked out, this local.properties
+# file will point to where the built owlmanager.jar and the owlhtml.jar 
+# are located.
+#
+owlmanager.lib=../owlmanager/build/owlmanager.jar
+owlhtml.lib=../owlhtml/build/owlhtml.jar
