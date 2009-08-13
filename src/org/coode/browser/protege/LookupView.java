@@ -2,8 +2,7 @@ package org.coode.browser.protege;
 
 import org.protege.editor.core.ProtegeApplication;
 import org.protege.editor.owl.ui.UIHelper;
-import org.semanticweb.owl.model.OWLEntity;
-import org.semanticweb.owl.model.OWLNamedObject;
+import org.semanticweb.owlapi.model.OWLEntity;
 
 import javax.swing.*;
 import java.awt.*;
@@ -122,8 +121,8 @@ public class LookupView extends AbstractBrowserView {
         resourceCombo.removeItemListener(itemListener);
     }
 
-    protected void refresh(OWLNamedObject entity) {
-        if (entity != null && entity instanceof OWLEntity){
+    protected void refresh(OWLEntity entity) {
+        if (entity != null){
             String base = map.get(resourceCombo.getSelectedItem());
             final URL query;
             try {

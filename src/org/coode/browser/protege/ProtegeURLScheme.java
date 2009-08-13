@@ -1,8 +1,12 @@
 package org.coode.browser.protege;
 
-import org.protege.editor.owl.model.OWLModelManager;
+import org.coode.html.OWLHTMLKit;
+import org.coode.html.url.ServletURLScheme;
+import org.coode.owl.mngr.NamedObjectType;
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.util.ShortFormProvider;
+
+import java.net.URI;
 /*
 * Copyright (C) 2007, University of Manchester
 *
@@ -27,28 +31,22 @@ import org.semanticweb.owlapi.util.ShortFormProvider;
 */
 
 /**
- * Author: Nick Drummond<br>
+ * Author: drummond<br>
  * http://www.cs.man.ac.uk/~drummond/<br><br>
  * <p/>
  * The University Of Manchester<br>
  * Bio Health Informatics Group<br>
- * Date: Sep 5, 2007<br><br>
+ * Date: Aug 12, 2009<br><br>
  */
-public class ProtegeShortformProviderWrapper implements ShortFormProvider {
+public class ProtegeURLScheme extends ServletURLScheme {
 
-    private OWLModelManager mngr;
-
-    public ProtegeShortformProviderWrapper(OWLModelManager mngr) {
-        this.mngr = mngr;
+    public ProtegeURLScheme(OWLHTMLKit server) {
+        super(server);
     }
+    
 
-
-    public String getShortForm(OWLEntity entity) {
-        return mngr.getRendering(entity);
-    }
-
-
-    public void dispose() {
-        // do nothing
+    @Override
+    protected OWLEntity getOWLEntity(URI uri, NamedObjectType type){
+        return type.getOWLEntity(IRI.create(uri), getOWLHTMLKit().getOWLServer().getOWLOntologyManager().getOWLDataFactory());
     }
 }

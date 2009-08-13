@@ -1,8 +1,10 @@
 package org.coode.browser.protege;
 
-import org.protege.editor.owl.model.OWLModelManager;
+import org.coode.owl.mngr.HierarchyProvider;
+import org.protege.editor.owl.model.hierarchy.OWLObjectHierarchyProvider;
 import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.util.ShortFormProvider;
+
+import java.util.Set;
 /*
 * Copyright (C) 2007, University of Manchester
 *
@@ -27,28 +29,54 @@ import org.semanticweb.owlapi.util.ShortFormProvider;
 */
 
 /**
- * Author: Nick Drummond<br>
+ * Author: drummond<br>
  * http://www.cs.man.ac.uk/~drummond/<br><br>
  * <p/>
  * The University Of Manchester<br>
  * Bio Health Informatics Group<br>
- * Date: Sep 5, 2007<br><br>
+ * Date: Aug 11, 2009<br><br>
  */
-public class ProtegeShortformProviderWrapper implements ShortFormProvider {
+public class HierarchyProviderAdapter<E extends OWLEntity> implements HierarchyProvider<E> {
 
-    private OWLModelManager mngr;
+    OWLObjectHierarchyProvider<E> provider;
 
-    public ProtegeShortformProviderWrapper(OWLModelManager mngr) {
-        this.mngr = mngr;
+
+    protected HierarchyProviderAdapter(OWLObjectHierarchyProvider<E> provider) {
+        this.provider = provider;
     }
 
 
-    public String getShortForm(OWLEntity entity) {
-        return mngr.getRendering(entity);
+    public E getRoot() {
+        return provider.getRoots().iterator().next();
+    }
+
+
+    public Set<E> getParents(E e) {
+        return provider.getParents(e);
+    }
+
+
+    public Set<E> getChildren(E e) {
+        return provider.getChildren(e);
+    }
+
+
+    public Set<E> getEquivalents(E e) {
+        return provider.getEquivalents(e);
+    }
+
+
+    public Set<E> getDescendants(E e) {
+        return provider.getDescendants(e);
+    }
+
+
+    public Set<E> getAncestors(E e) {
+        return provider.getAncestors(e);
     }
 
 
     public void dispose() {
-        // do nothing
+        this.provider = null;
     }
 }

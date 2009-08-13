@@ -2,7 +2,9 @@ package org.coode.browser.protege;
 
 import org.protege.editor.owl.model.OWLModelManager;
 import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.util.ShortFormProvider;
+import org.semanticweb.owlapi.util.BidirectionalShortFormProvider;
+
+import java.util.Set;
 /*
 * Copyright (C) 2007, University of Manchester
 *
@@ -27,28 +29,47 @@ import org.semanticweb.owlapi.util.ShortFormProvider;
 */
 
 /**
- * Author: Nick Drummond<br>
+ * Author: drummond<br>
  * http://www.cs.man.ac.uk/~drummond/<br><br>
  * <p/>
  * The University Of Manchester<br>
  * Bio Health Informatics Group<br>
- * Date: Sep 5, 2007<br><br>
+ * Date: Aug 5, 2009<br><br>
  */
-public class ProtegeShortformProviderWrapper implements ShortFormProvider {
+public class ProtegeBidirectionalShortFormProvider implements BidirectionalShortFormProvider {
 
     private OWLModelManager mngr;
 
-    public ProtegeShortformProviderWrapper(OWLModelManager mngr) {
+
+    public ProtegeBidirectionalShortFormProvider(OWLModelManager mngr) {
         this.mngr = mngr;
     }
 
 
-    public String getShortForm(OWLEntity entity) {
-        return mngr.getRendering(entity);
+    public Set<OWLEntity> getEntities(String s) {
+        return mngr.getOWLEntityFinder().getMatchingOWLEntities(s);
+    }
+
+
+    public OWLEntity getEntity(String s) {
+        for (OWLEntity entity : mngr.getOWLEntityFinder().getMatchingOWLEntities(s)){
+            return entity;
+        }
+        return null;
+    }
+
+
+    public Set<String> getShortForms() {
+        return mngr.getOWLEntityFinder().getOWLEntityRenderings();
+    }
+
+
+    public String getShortForm(OWLEntity owlEntity) {
+        return mngr.getRendering(owlEntity);
     }
 
 
     public void dispose() {
-        // do nothing
+        mngr = null;
     }
 }

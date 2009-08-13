@@ -1,7 +1,10 @@
 package org.coode.browser.protege;
 
-import org.coode.html.OWLHTMLServer;
+import org.apache.log4j.Logger;
+import org.coode.html.OWLHTMLKit;
 import org.coode.html.OntologyExporter;
+import org.coode.html.impl.OWLHTMLKitImpl;
+import org.coode.owl.mngr.OWLServer;
 import org.protege.editor.core.ProtegeApplication;
 import org.protege.editor.core.ui.progress.BackgroundTask;
 import org.protege.editor.core.ui.util.NativeBrowserLauncher;
@@ -10,6 +13,8 @@ import org.protege.editor.owl.ui.action.ProtegeOWLAction;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /*
  * Copyright (C) 2007, University of Manchester
@@ -46,6 +51,18 @@ import java.io.File;
  */
 public class ExportOWLDocAction extends ProtegeOWLAction {
 
+    // as all URLs in links should be relative, this should not matter
+    private static URL DEFAULT_BASE;
+
+    static {
+        try {
+            DEFAULT_BASE = new URL("http://www.co-ode.org/");
+        }
+        catch (MalformedURLException e) {
+            Logger.getLogger(ProtegeServerImpl.class).error(e);
+        }
+    }
+
     public void actionPerformed(ActionEvent actionEvent) {
         final File folder = UIUtil.chooseFolder(getOWLWorkspace(), "Select a base for OWLDoc");
         if (folder != null){
@@ -53,8 +70,9 @@ public class ExportOWLDocAction extends ProtegeOWLAction {
             Runnable export = new Runnable(){
                 public void run() {
                     try {
-                        OWLHTMLServer svr = new ProtegeOntologyServer(getOWLModelManager());
-                        OntologyExporter exporter = new OntologyExporter(svr);
+                        OWLServer svr = new ProtegeServerImpl(getOWLModelManager());
+                        OWLHTMLKit owlhtmlKit = new OWLHTMLKitImpl("owldoc-kit", svr, DEFAULT_BASE);
+                        OntologyExporter exporter = new OntologyExporter(owlhtmlKit);
                         File index = exporter.export(folder);
                         ProtegeApplication.getBackgroundTaskManager().endTask(exportTask);
                         NativeBrowserLauncher.openURL("file://" + index.getPath());
@@ -72,9 +90,10 @@ public class ExportOWLDocAction extends ProtegeOWLAction {
     }
 
     public void initialise() throws Exception {
+        // do nothing
     }
 
     public void dispose() {
-        //@@TODO implement
+        // do nothing
     }
 }

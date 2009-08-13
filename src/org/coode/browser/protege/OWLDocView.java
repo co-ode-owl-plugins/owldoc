@@ -1,31 +1,29 @@
 package org.coode.browser.protege;
 
 import org.apache.log4j.Logger;
-import org.coode.html.OWLHTMLServer;
+import org.coode.html.OWLHTMLKit;
 import org.coode.html.doclet.HTMLDoclet;
 import org.coode.html.doclet.HierarchyRootDoclet;
 import org.coode.html.hierarchy.OWLClassHierarchyTreeFragment;
 import org.coode.html.hierarchy.TreeFragment;
-import org.coode.html.impl.OWLHTMLConstants;
+import org.coode.html.impl.OWLHTMLKitImpl;
+import org.coode.html.impl.OWLHTMLProperty;
 import org.coode.html.summary.*;
-import org.coode.html.url.ServletURLScheme;
-import org.coode.html.url.URLScheme;
-import org.coode.html.util.URLUtils;
-import org.coode.owl.mngr.NamedObjectType;
+import org.coode.owl.mngr.OWLServer;
 import org.protege.editor.core.ui.util.NativeBrowserLauncher;
 import org.protege.editor.core.ui.view.DisposableAction;
-import org.semanticweb.owl.model.*;
+import org.semanticweb.owlapi.model.*;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.io.*;
-import java.net.URI;
+import java.io.PipedReader;
+import java.io.PipedWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.util.Map;
 
 /*
  * Copyright (C) 2007, University of Manchester
@@ -66,69 +64,33 @@ public class OWLDocView extends AbstractBrowserView {
 
     private static final String OWLDOC_CSS = "resources/owldocview.css";
 
-//    private URL BASE_URL;
-
-//    {
-//        try {
-//            BASE_URL = new URL("http://www.co-ode.org/ontologyserver/)");
-//        }
-//        catch (MalformedURLException e) {
-//            logger.error(e);
-//        }
-//    }
-
-    private OWLHTMLServer server;
-
     private PipedReader r;
     private PrintWriter w;
 
-    private OWLNamedObject entity;
-
-    private URLScheme urlScheme;
+    private OWLObject currentSelection;
 
     private boolean renderSubs = false;
 
     private HyperlinkListener linkListener = new HyperlinkListener(){
         public void hyperlinkUpdate(HyperlinkEvent event) {
             if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED){
-                final URL linkURL = event.getURL();
-                if (!linkURL.equals(server.getURLScheme().getURLForNamedObject(entity))){
-                    if (linkURL.toString().endsWith("#")){ //@@TODO tidyup - this is a hack for now
-                        renderSubs = true;
-                        refresh(server.getURLScheme().getNamedObjectForURL(linkURL));
-                    }
-                    else{
-                        renderSubs = false;
-                        updateGlobalSelection(linkURL);
-                    }
-                }
+                handleHyperlink(event.getURL());
             }
         }
     };
 
-    private DisposableAction srcAction = new DisposableAction("Show source", null){
-        public void dispose() {
-            // do nothing
-        }
 
+    private DisposableAction srcAction = new DisposableAction("Show source", null){
         public void actionPerformed(ActionEvent event) {
             handleShowSrc();
         }
+
+        public void dispose() {
+            // do nothing
+        }
     };
 
-
-    private void handleShowSrc() {
-        HTMLDoclet ren = getRenderer();
-        final StringWriter stringWriter = new StringWriter();
-        PrintWriter stringRenderer = new PrintWriter(stringWriter);
-        ren.renderAll(server.getURLScheme().getURLForNamedObject(OWLDocView.this.entity), stringRenderer);
-        stringRenderer.flush();
-        JTextArea t = new JTextArea(stringWriter.getBuffer().toString());
-        t.setWrapStyleWord(true);
-        final JScrollPane scroller = new JScrollPane(t);
-        scroller.setPreferredSize(new Dimension(600, 500));
-        JOptionPane.showMessageDialog(null, scroller, "Source for " + entity.getURI(), JOptionPane.OK_OPTION);
-    }
+    private OWLHTMLKit kit;
 
 
     protected void initialiseOWLView() throws Exception {
@@ -136,9 +98,10 @@ public class OWLDocView extends AbstractBrowserView {
 
         getBrowser().setNavigateActive(false);
 
-        server = new ProtegeOntologyServer(getOWLModelManager());
-        server.getProperties().set(OWLHTMLConstants.OPTION_DEFAULT_CSS, null);
-        server.setURLScheme(new ProtegeURLScheme(server));
+        OWLServer server = new ProtegeServerImpl(getOWLModelManager());
+        kit = new OWLHTMLKitImpl("id", server, new URL("http://www.co-ode.org/"));
+        kit.getHTMLProperties().set(OWLHTMLProperty.optionDefaultCSS, null);
+        kit.setURLScheme(new ProtegeURLScheme(kit));
 
         getBrowser().addLinkListener(linkListener);
 
@@ -156,20 +119,22 @@ public class OWLDocView extends AbstractBrowserView {
         getBrowser().removeLinkListener(linkListener);
     }
 
-    protected void refresh(OWLNamedObject entity) {
 
-        this.entity = entity;
+    protected void refresh(OWLEntity object) {
 
-        if (entity != null){
+        this.currentSelection = object;
+
+        if (currentSelection != null){
             Runnable generateHTML = new Runnable(){
                 public void run() {
                     try{
                         HTMLDoclet ren = getRenderer();
-                        ren.renderAll(server.getURLScheme().getURLForNamedObject(OWLDocView.this.entity), w);
+                        ren.renderAll(kit.getURLScheme().getURLForOWLObject(OWLDocView.this.currentSelection), w);
                         w.close();
                     }
                     catch(Throwable e){
-                        logger.error(e);
+                        e.printStackTrace();
+//                        logger.error(e);
                     }
                 }
             };
@@ -178,7 +143,7 @@ public class OWLDocView extends AbstractBrowserView {
                 r = new PipedReader();
                 w = new PrintWriter(new PipedWriter(r));
                 new Thread(generateHTML).start();
-                getBrowser().setContent(r, server.getURLScheme().getURLForNamedObject(entity));
+                getBrowser().setContent(r, kit.getURLScheme().getURLForOWLObject(currentSelection));
             }
             catch (Exception e) {
                 logger.error(e);
@@ -189,38 +154,43 @@ public class OWLDocView extends AbstractBrowserView {
         }
     }
 
-    private AbstractSummaryHTMLPage getRenderer(){
-        AbstractSummaryHTMLPage ren = null;
-        if (entity instanceof OWLClass){
-            TreeFragment tree = new OWLClassHierarchyTreeFragment(server, server.getClassHierarchyProvider(), "Asserted Class Hierarchy");
-            HierarchyRootDoclet<OWLClass> clsHierarchyRen = new HierarchyRootDoclet<OWLClass>(server, tree);
-//            clsHierarchyRen.setRenderHiddenSubs(false);
-//            clsHierarchyRen.setAutoExpandSubs(renderSubs);
-            ren = new OWLClassSummaryHTMLPage(server);
-            ((OWLClassSummaryHTMLPage)ren).setOWLHierarchyRenderer(clsHierarchyRen);
+    private AbstractOWLEntitySummaryHTMLPage getRenderer(){
+        AbstractOWLEntitySummaryHTMLPage ren = null;
+        if (currentSelection instanceof OWLClass){
+            TreeFragment<OWLClass> tree = new OWLClassHierarchyTreeFragment(kit, kit.getOWLServer().getClassHierarchyProvider(), "Class Hierarchy");
+            HierarchyRootDoclet<OWLClass> clsHierarchyRen = new HierarchyRootDoclet<OWLClass>(kit, tree);
+            clsHierarchyRen.setShowSubs(renderSubs);
+            ren = new OWLClassSummaryHTMLPage(kit);
+            ren.setOWLHierarchyRenderer(clsHierarchyRen);
         }
-        else if (entity instanceof OWLObjectProperty){
-            ren = new OWLObjectPropertySummaryHTMLPage(server);
+        else if (currentSelection instanceof OWLObjectProperty){
+            ren = new OWLObjectPropertySummaryHTMLPage(kit);
         }
-        else if (entity instanceof OWLDataProperty){
-            ren = new OWLDataPropertySummaryHTMLPage(server);
+        else if (currentSelection instanceof OWLDataProperty){
+            ren = new OWLDataPropertySummaryHTMLPage(kit);
         }
-        else if (entity instanceof OWLIndividual){
-            ren = new OWLIndividualSummaryHTMLPage(server);
+        else if (currentSelection instanceof OWLIndividual){
+            ren = new OWLIndividualSummaryHTMLPage(kit);
+        }
+        else if (currentSelection instanceof OWLAnnotationProperty){
+            ren = new OWLAnnotationPropertySummaryHTMLPage(kit);
+        }
+        else if (currentSelection instanceof OWLDatatype){
+            ren = new OWLDatatypeSummaryHTMLPage(kit);
         }
 
         if (ren != null){
-            ren.setUserObject(entity);
+            ren.setUserObject(currentSelection);
         }
         return ren;
     }
 
     private void updateGlobalSelection(URL url) {
-        OWLNamedObject tempEntity = server.getURLScheme().getNamedObjectForURL(url);
+        OWLObject tempEntity = kit.getURLScheme().getOWLObjectForURL(url);
         if (tempEntity != null){
-            entity = tempEntity;
+            currentSelection = tempEntity;
             if (tempEntity instanceof OWLEntity){
-                getOWLWorkspace().getOWLSelectionModel().setSelectedEntity((OWLEntity)entity);
+                getOWLWorkspace().getOWLSelectionModel().setSelectedEntity((OWLEntity) currentSelection);
             }
         }
         else{
@@ -229,33 +199,32 @@ public class OWLDocView extends AbstractBrowserView {
     }
 
 
-    private class ProtegeURLScheme extends ServletURLScheme {
-
-        public ProtegeURLScheme(OWLHTMLServer server) {
-            super(server);
-        }
-
-
-        public OWLNamedObject getNamedObjectForURL(URL url) {
-            OWLNamedObject object = null;
-
-            Map<String, String> paramMap = URLUtils.getParams(url);
-            if (!paramMap.isEmpty()){
-                try {
-                    String uri = URLDecoder.decode(paramMap.get("uri"), "UTF-8");
-                    NamedObjectType type = getType(url);
-
-                    if (uri != null){
-                        // we know the entity already exists, so just get it
-                        object = type.getExistingObject(URI.create(uri), server);
-                    }
-                }
-                catch (UnsupportedEncodingException e) {
-                    logger.error(e);
+    private void handleHyperlink(URL linkURL) {
+        if (!linkURL.equals(kit.getURLScheme().getURLForOWLObject(currentSelection))){
+            if (linkURL.toString().endsWith("#")){ //@@TODO tidyup - this is a hack for now
+                renderSubs = true;
+                final OWLObject owlObject = kit.getURLScheme().getOWLObjectForURL(linkURL);
+                if (owlObject instanceof OWLEntity){
+                    refresh((OWLEntity)owlObject);
                 }
             }
-            return object;
+            else{
+                renderSubs = false;
+                updateGlobalSelection(linkURL);
+            }
         }
     }
 
+    private void handleShowSrc() {
+        HTMLDoclet ren = getRenderer();
+        final StringWriter stringWriter = new StringWriter();
+        PrintWriter stringRenderer = new PrintWriter(stringWriter);
+        ren.renderAll(kit.getURLScheme().getURLForOWLObject(OWLDocView.this.currentSelection), stringRenderer);
+        stringRenderer.flush();
+        JTextArea t = new JTextArea(stringWriter.getBuffer().toString());
+        t.setWrapStyleWord(true);
+        final JScrollPane scroller = new JScrollPane(t);
+        scroller.setPreferredSize(new Dimension(600, 500));
+        JOptionPane.showMessageDialog(null, scroller, "Source for " + getOWLModelManager().getRendering(currentSelection), JOptionPane.OK_OPTION);
+    }
 }
