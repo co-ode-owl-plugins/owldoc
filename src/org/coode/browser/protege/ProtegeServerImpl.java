@@ -1,23 +1,35 @@
 package org.coode.browser.protege;
 
-import org.coode.owl.mngr.*;
+import java.net.URI;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import org.coode.owl.mngr.HierarchyProvider;
+import org.coode.owl.mngr.OWLClassExpressionParser;
+import org.coode.owl.mngr.OWLDescriptionParser;
+import org.coode.owl.mngr.OWLServer;
+import org.coode.owl.mngr.OWLServerListener;
+import org.coode.owl.mngr.ServerPropertiesAdapter;
+import org.coode.owl.mngr.ServerProperty;
 import org.coode.owl.mngr.impl.OWLEntityFinderImpl;
 import org.coode.owl.mngr.impl.ServerPropertiesAdapterImpl;
 import org.coode.owl.mngr.impl.ServerPropertiesImpl;
 import org.coode.owl.util.OWLObjectComparator;
 import org.protege.editor.owl.model.OWLModelManager;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
-import org.semanticweb.owlapi.inference.OWLReasoner;
-import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLObject;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.util.BidirectionalShortFormProvider;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
-
-import java.net.URI;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 /*
  * Copyright (C) 2007, University of Manchester
