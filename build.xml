@@ -10,6 +10,11 @@
    <property name = "protege.home"      location="${env.PROTEGE_HOME}"/>
    <property file="local.properties"/>
 
+   <property file="version.properties"/>
+   <property name="major.version" value="1"/>
+   <property name="minor.version" value="1"/>
+   <property name="micro.version" value="0"/>
+
    <property name = "owlmanager.lib"    location="./lib/owlmanager.jar"/>
    <property name = "owlhtml.lib"       location="./lib/owlhtml.jar"/>
 
@@ -165,6 +170,8 @@
      <tstamp>
        <format property="build.time" pattern="MM/dd/yyyy hh:mm aa"/>
      </tstamp>
+     <property name="bundle.version"
+               value="${major.version}.${minor.version}.${micro.version}"/>
      <mkdir dir = "${build}"/>
      <mkdir dir = "${classes}"/>
      <mkdir dir = "${classes}/lib"/>
@@ -206,6 +213,7 @@
                mode = "update">
         <attribute name="Built-By" value = "${user.name}"/>
         <attribute name="Build-Date" value = "${build.time}"/>
+        <attribute name="Bundle-Version" value="${bundle.version}"/>
      </manifest>
    </target>
 
@@ -216,9 +224,6 @@
    </target>
 
    <target name = "install" depends = "jar">
-     <!-- flush cache -->
-     <delete dir = "${protege.home}/configuration/org.eclipse.core.runtime"/>
-     <delete dir = "${protege.home}/configuration/org.eclipse.osgi"/>
      <copy file="${build}/${plugin}.jar" 
            todir = "${protege.plugins}"
            overwrite = "true"/>
@@ -243,6 +248,28 @@
            <jvmarg value = "-Dfile.encoding=UTF-8"/>
            <jvmarg value = "-Xrunjdwp:transport=dt_socket,address=8500,server=y,suspend=y"/> 
        </java>
+   </target>
+
+   <target name = "create.update.properties">
+       <property name="update.properties.file"
+                 location="${build}/update.owldoc.properties"/>
+       <echo file="${update.properties.file}" append="false">
+name=Browser View (OWLDoc)
+id=${plugin}
+version=${bundle.version}
+download=http://co-ode-owl-plugins.googlecode.com/files/${plugin}_${major.version}_${minor.version}_${micro.version}.zip
+readme=http://co-ode-owl-plugins.googlecode.com/svn/trunk/registries/4_1/version.owldoc.html
+license=http://www.gnu.org/licenses/lgpl.html
+author=CO-ODE, The University of Manchester
+       </echo>
+   </target>
+
+   <target name = "dist" depends="jar, create.update.properties">
+       <zip destfile="${build}/${plugin}_${major.version}_${minor.version}_${micro.version}.zip">
+           <fileset dir="${build}">
+               <filename name="${plugin}.jar"/>
+           </fileset>
+       </zip>
    </target>
 	
    <target name = "clean">
