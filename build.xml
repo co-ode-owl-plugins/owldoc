@@ -33,7 +33,7 @@
         This may be the only setting that the developer needs to
         change.
      -->
-   <property name = "plugin"          value = "org.coode.owldoc"/>
+   <property name = "plugin"          value = "org.coode.browser"/>
 
    
    <!-- 
@@ -257,7 +257,7 @@
 name=Browser View (OWLDoc)
 id=${plugin}
 version=${bundle.version}
-download=http://co-ode-owl-plugins.googlecode.com/files/${plugin}_${major.version}_${minor.version}_${micro.version}.zip
+download=http://co-ode-owl-plugins.googlecode.com/files/org.coode.owldoc_${major.version}_${minor.version}_${micro.version}.zip
 readme=http://co-ode-owl-plugins.googlecode.com/svn/trunk/registries/4_1/version.owldoc.html
 license=http://www.gnu.org/licenses/lgpl.html
 author=CO-ODE, The University of Manchester
@@ -265,7 +265,7 @@ author=CO-ODE, The University of Manchester
    </target>
 
    <target name = "dist" depends="jar, create.update.properties">
-       <zip destfile="${build}/${plugin}_${major.version}_${minor.version}_${micro.version}.zip">
+       <zip destfile="${build}/org.coode.owldoc_${major.version}_${minor.version}_${micro.version}.zip">
            <fileset dir="${build}">
                <filename name="${plugin}.jar"/>
            </fileset>
