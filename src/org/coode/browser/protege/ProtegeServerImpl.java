@@ -8,7 +8,6 @@ import java.util.Set;
 
 import org.coode.owl.mngr.HierarchyProvider;
 import org.coode.owl.mngr.OWLClassExpressionParser;
-import org.coode.owl.mngr.OWLDescriptionParser;
 import org.coode.owl.mngr.OWLServer;
 import org.coode.owl.mngr.OWLServerListener;
 import org.coode.owl.mngr.ServerPropertiesAdapter;
@@ -76,7 +75,7 @@ public class ProtegeServerImpl implements OWLServer {
 
     private ShortFormProvider shortformProvider;
 
-    private Map<String, OWLDescriptionParser> parserMap = new HashMap<String, OWLDescriptionParser>();
+    private Map<String, OWLClassExpressionParser> parserMap = new HashMap<String, OWLClassExpressionParser>();
 
     private ServerPropertiesAdapter<ServerProperty> properties;
 
