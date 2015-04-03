@@ -9,7 +9,6 @@ import java.util.Set;
 import org.coode.owl.mngr.HierarchyProvider;
 import org.coode.owl.mngr.OWLClassExpressionParser;
 import org.coode.owl.mngr.OWLServer;
-import org.coode.owl.mngr.OWLServerListener;
 import org.coode.owl.mngr.ServerPropertiesAdapter;
 import org.coode.owl.mngr.ServerProperty;
 import org.coode.owl.mngr.impl.OWLEntityFinderImpl;
@@ -18,6 +17,7 @@ import org.coode.owl.mngr.impl.ServerPropertiesImpl;
 import org.coode.owl.util.OWLObjectComparator;
 import org.protege.editor.owl.model.OWLModelManager;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLObject;
@@ -52,128 +52,129 @@ import org.semanticweb.owlapi.util.ShortFormProvider;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-
 /**
  * Author: Nick Drummond<br>
- *
- * http://www.cs.man.ac.uk/~drummond<br><br>
+ * http://www.cs.man.ac.uk/~drummond<br>
+ * <br>
  * <p/>
  * The University Of Manchester<br>
  * Bio Health Informatics Group<br>
- * Date: Jun 7, 2007<br><br>
+ * Date: Jun 7, 2007<br>
+ * <br>
  * <p/>
  */
 public class ProtegeServerImpl implements OWLServer {
 
     private OWLModelManager mngr;
-
     private OWLObjectComparator<OWLObject> comp;
-
     private HierarchyProvider<OWLClass> toldClassHierarchyReasoner;
     private HierarchyProvider<OWLObjectProperty> toldObjectPropertyHierarchyProvider;
     private HierarchyProvider<OWLDataProperty> toldDataPropertyHierarchyProvider;
-
     private ShortFormProvider shortformProvider;
-
     private Map<String, OWLClassExpressionParser> parserMap = new HashMap<String, OWLClassExpressionParser>();
-
     private ServerPropertiesAdapter<ServerProperty> properties;
-
     private org.coode.owl.mngr.OWLEntityFinder finder;
-
     private OntologyIRIShortFormProvider ontologyShortFormProvider;
-
     private BidirectionalShortFormProvider nameCache;
-
-
 
     public ProtegeServerImpl(OWLModelManager mngr) {
         this.mngr = mngr;
-
     }
 
-
+    @Override
     public OWLOntology getActiveOntology() {
         return mngr.getActiveOntology();
     }
 
+    @Override
     public void setActiveOntology(OWLOntology ontology) {
         mngr.setActiveOntology(ontology);
     }
 
+    @Override
     public Set<OWLOntology> getOntologies() {
         return mngr.getOntologies();
     }
 
+    @Override
     public Set<OWLOntology> getActiveOntologies() {
         return mngr.getActiveOntologies();
     }
 
+    @Override
     public OWLOntologyManager getOWLOntologyManager() {
         return mngr.getOWLOntologyManager();
     }
 
+    @Override
     public OWLReasoner getOWLReasoner() {
         return mngr.getOWLReasonerManager().getCurrentReasoner();
     }
 
-
     public HierarchyProvider<OWLClass> getClassHierarchyProvider() {
-        if (toldClassHierarchyReasoner == null){
-            toldClassHierarchyReasoner = new HierarchyProviderAdapter<OWLClass>(mngr.getOWLHierarchyManager().getOWLClassHierarchyProvider());
+        if (toldClassHierarchyReasoner == null) {
+            toldClassHierarchyReasoner = new HierarchyProviderAdapter<OWLClass>(
+                    mngr.getOWLHierarchyManager()
+                            .getOWLClassHierarchyProvider());
         }
-        return toldClassHierarchyReasoner;        
+        return toldClassHierarchyReasoner;
     }
 
-
-    public HierarchyProvider<OWLObjectProperty> getOWLObjectPropertyHierarchyProvider() {
-        if (toldObjectPropertyHierarchyProvider == null){
-            toldObjectPropertyHierarchyProvider = new HierarchyProviderAdapter<OWLObjectProperty>(mngr.getOWLHierarchyManager().getOWLObjectPropertyHierarchyProvider());
+    public HierarchyProvider<OWLObjectProperty>
+            getOWLObjectPropertyHierarchyProvider() {
+        if (toldObjectPropertyHierarchyProvider == null) {
+            toldObjectPropertyHierarchyProvider = new HierarchyProviderAdapter<OWLObjectProperty>(
+                    mngr.getOWLHierarchyManager()
+                            .getOWLObjectPropertyHierarchyProvider());
         }
         return toldObjectPropertyHierarchyProvider;
     }
 
-
-    public HierarchyProvider<OWLDataProperty> getOWLDataPropertyHierarchyProvider() {
-        if (toldDataPropertyHierarchyProvider == null){
-            toldDataPropertyHierarchyProvider = new HierarchyProviderAdapter<OWLDataProperty>(mngr.getOWLHierarchyManager().getOWLDataPropertyHierarchyProvider());
+    public HierarchyProvider<OWLDataProperty>
+            getOWLDataPropertyHierarchyProvider() {
+        if (toldDataPropertyHierarchyProvider == null) {
+            toldDataPropertyHierarchyProvider = new HierarchyProviderAdapter<OWLDataProperty>(
+                    mngr.getOWLHierarchyManager()
+                            .getOWLDataPropertyHierarchyProvider());
         }
         return toldDataPropertyHierarchyProvider;
     }
 
-
+    @Override
     public Comparator<OWLObject> getComparator() {
-        if (comp == null){
+        if (comp == null) {
             comp = new OWLObjectComparator<OWLObject>(this);
         }
         return comp;
     }
 
-
+    @Override
     public org.coode.owl.mngr.OWLEntityFinder getFinder() {
-        if (finder == null){
+        if (finder == null) {
             finder = new OWLEntityFinderImpl(getNameCache(), this);
         }
         return finder;
     }
 
-
+    @Override
     public OWLEntityChecker getOWLEntityChecker() {
         throw new UnsupportedOperationException();
     }
 
-
+    @Override
     public ShortFormProvider getShortFormProvider() {
-        if (shortformProvider == null){
+        if (shortformProvider == null) {
             shortformProvider = new ProtegeShortformProviderWrapper(mngr);
         }
         return shortformProvider;
     }
 
-
+    @Override
     public OntologyIRIShortFormProvider getOntologyShortFormProvider() {
-        if (ontologyShortFormProvider == null){
-            ontologyShortFormProvider = new OntologyIRIShortFormProvider(){
+        if (ontologyShortFormProvider == null) {
+            ontologyShortFormProvider = new OntologyIRIShortFormProvider() {
+
+                @Override
                 public String getShortForm(OWLOntology owlOntology) {
                     return mngr.getRendering(owlOntology);
                 }
@@ -182,85 +183,120 @@ public class ProtegeServerImpl implements OWLServer {
         return ontologyShortFormProvider;
     }
 
-
+    @Override
     public OWLClassExpressionParser getClassExpressionParser(String s) {
         throw new UnsupportedOperationException();
     }
 
-
-    public void registerDescriptionParser(String s, OWLClassExpressionParser owlClassExpressionParser) {
+    @Override
+    public void registerDescriptionParser(String s,
+            OWLClassExpressionParser owlClassExpressionParser) {
         throw new UnsupportedOperationException();
     }
 
-
+    @Override
     public Set<String> getSupportedSyntaxes() {
         return parserMap.keySet();
     }
 
-
+    @Override
     public ServerPropertiesAdapter<ServerProperty> getProperties() {
-
-        if (properties == null){
-            properties = new ServerPropertiesAdapterImpl<ServerProperty>(new ServerPropertiesImpl());
+        if (properties == null) {
+            properties = new ServerPropertiesAdapterImpl<ServerProperty>(
+                    new ServerPropertiesImpl());
         }
         return properties;
     }
 
-
+    @Override
     public void clear() {
-        if (shortformProvider != null){
+        if (shortformProvider != null) {
             shortformProvider.dispose();
             shortformProvider = null;
         }
-        if (toldClassHierarchyReasoner != null){
+        if (toldClassHierarchyReasoner != null) {
             toldClassHierarchyReasoner.dispose();
             toldClassHierarchyReasoner = null;
         }
-        if (toldObjectPropertyHierarchyProvider != null){
-                toldObjectPropertyHierarchyProvider.dispose();
+        if (toldObjectPropertyHierarchyProvider != null) {
+            toldObjectPropertyHierarchyProvider.dispose();
             toldObjectPropertyHierarchyProvider = null;
         }
-
         comp = null;
     }
 
-    public void loadOntology(URI ontPhysicalURI) throws OWLOntologyCreationException {
+    @Override
+    public OWLOntology loadOntology(URI ontPhysicalURI)
+            throws OWLOntologyCreationException {
         throw new UnsupportedOperationException();
     }
 
-
+    @Override
     public void removeOntology(OWLOntology owlOntology) {
         throw new UnsupportedOperationException();
     }
 
-
+    @Override
     public void clearOntologies() {
         throw new UnsupportedOperationException();
     }
 
-
-    public void removeServerListener(OWLServerListener owlServerListener) {
-        throw new UnsupportedOperationException();
-    }
-
-    public void addServerListener(OWLServerListener owlServerListener) {
-        throw new UnsupportedOperationException();
-    }
-
+    @Override
     public void dispose() {
         clear();
     }
 
-
+    @Override
     public boolean isDead() {
         return false;
     }
 
-
     private BidirectionalShortFormProvider getNameCache() {
-        if (nameCache == null){
+        if (nameCache == null) {
             nameCache = new ProtegeBidirectionalShortFormProvider(mngr);
         }
         return nameCache;
+    }
+
+    @Override
+    public void addActiveOntologyListener(Listener l) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void removeActiveOntologyListener(Listener l) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void loadOntologies(Map<IRI, IRI> ontMap) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public OWLOntology reloadOntology(OWLOntology ontology)
+            throws OWLOntologyCreationException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public OWLOntology getOntologyForIRI(IRI iri) {
+        return mngr.getOWLOntologyManager().getOntology(iri);
+    }
+
+    @Override
+    public <N extends OWLObject> HierarchyProvider<N> getHierarchyProvider(
+            Class<N> cls) {
+        return (HierarchyProvider<N>) toldClassHierarchyReasoner;
+    }
+
+    @Override
+    public void resetProperties() {
+        properties = null;
+    }
+
+    @Override
+    public OWLOntology getRootOntology() {
+        return mngr.getActiveOntology();
     }
 }

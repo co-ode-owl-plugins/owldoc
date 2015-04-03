@@ -1,12 +1,7 @@
 package org.coode.browser.protege;
 
 import org.coode.html.OWLHTMLKit;
-import org.coode.html.url.ServletURLScheme;
-import org.coode.owl.mngr.NamedObjectType;
-import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLEntity;
-
-import java.net.URI;
+import org.coode.html.url.PermalinkURLScheme;
 /*
 * Copyright (C) 2007, University of Manchester
 *
@@ -38,15 +33,12 @@ import java.net.URI;
  * Bio Health Informatics Group<br>
  * Date: Aug 12, 2009<br><br>
  */
-public class ProtegeURLScheme extends ServletURLScheme {
+public class ProtegeURLScheme extends PermalinkURLScheme {
 
     public ProtegeURLScheme(OWLHTMLKit server) {
-        super(server);
+        super(server.getURLScheme());
     }
     
 
-    @Override
-    protected OWLEntity getOWLEntity(URI uri, NamedObjectType type){
-        return type.getOWLEntity(IRI.create(uri), getOWLHTMLKit().getOWLServer().getOWLOntologyManager().getOWLDataFactory());
-    }
+
 }

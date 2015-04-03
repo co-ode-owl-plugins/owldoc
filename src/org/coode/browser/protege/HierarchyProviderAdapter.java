@@ -1,9 +1,5 @@
 package org.coode.browser.protege;
 
-import org.coode.owl.mngr.HierarchyProvider;
-import org.protege.editor.owl.model.hierarchy.OWLObjectHierarchyProvider;
-import org.semanticweb.owlapi.model.OWLEntity;
-
 import java.util.Set;
 /*
 * Copyright (C) 2007, University of Manchester
@@ -28,6 +24,10 @@ import java.util.Set;
 * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+import org.coode.owl.mngr.HierarchyProvider;
+import org.protege.editor.owl.model.hierarchy.OWLObjectHierarchyProvider;
+import org.semanticweb.owlapi.model.OWLEntity;
+
 /**
  * Author: drummond<br>
  * http://www.cs.man.ac.uk/~drummond/<br><br>
@@ -46,8 +46,9 @@ public class HierarchyProviderAdapter<E extends OWLEntity> implements HierarchyP
     }
 
 
-    public E getRoot() {
-        return provider.getRoots().iterator().next();
+    @Override
+    public Set<E> getRoots() {
+        return provider.getRoots();
     }
 
 
@@ -78,5 +79,26 @@ public class HierarchyProviderAdapter<E extends OWLEntity> implements HierarchyP
 
     public void dispose() {
         this.provider = null;
+    }
+
+    @Override
+    public Class<? extends E> getNodeClass() {
+        return (Class<? extends E>) provider.getRoots().iterator().next()
+                .getClass();
+    }
+
+    @Override
+    public boolean hasAncestor(E node, E ancestor) {
+        return provider.getAncestors(node).contains(ancestor);
+    }
+
+    @Override
+    public boolean isRoot(E node) {
+        return provider.getRoots().contains(node);
+    }
+
+    @Override
+    public boolean isLeaf(E node) {
+        return provider.getChildren(node).isEmpty();
     }
 }

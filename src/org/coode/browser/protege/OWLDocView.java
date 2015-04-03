@@ -1,29 +1,41 @@
 package org.coode.browser.protege;
 
-import org.apache.log4j.Logger;
-import org.coode.html.OWLHTMLKit;
-import org.coode.html.doclet.HTMLDoclet;
-import org.coode.html.doclet.HierarchyRootDoclet;
-import org.coode.html.hierarchy.OWLClassHierarchyTreeFragment;
-import org.coode.html.hierarchy.TreeFragment;
-import org.coode.html.impl.OWLHTMLKitImpl;
-import org.coode.html.impl.OWLHTMLProperty;
-import org.coode.html.summary.*;
-import org.coode.owl.mngr.OWLServer;
-import org.protege.editor.core.ui.util.NativeBrowserLauncher;
-import org.protege.editor.core.ui.view.DisposableAction;
-import org.semanticweb.owlapi.model.*;
-
-import javax.swing.*;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
-import java.awt.*;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.io.PipedReader;
 import java.io.PipedWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
+
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+
+import org.apache.log4j.Logger;
+import org.coode.html.OWLHTMLKit;
+import org.coode.html.doclet.HTMLDoclet;
+import org.coode.html.doclet.OWLAnnotationPropertySummaryDoclet;
+import org.coode.html.doclet.OWLClassSummaryDoclet;
+import org.coode.html.doclet.OWLDataPropertySummaryDoclet;
+import org.coode.html.doclet.OWLDatatypeSummaryDoclet;
+import org.coode.html.doclet.OWLIndividualSummaryDoclet;
+import org.coode.html.doclet.OWLObjectPropertySummaryDoclet;
+import org.coode.html.impl.OWLHTMLKitImpl;
+import org.coode.html.impl.OWLHTMLProperty;
+import org.coode.owl.mngr.OWLServer;
+import org.protege.editor.core.ui.util.NativeBrowserLauncher;
+import org.protege.editor.core.ui.view.DisposableAction;
+import org.semanticweb.owlapi.model.OWLAnnotationProperty;
+import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLDatatype;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLObject;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
 
 /*
  * Copyright (C) 2007, University of Manchester
@@ -72,6 +84,7 @@ public class OWLDocView extends AbstractBrowserView {
     private boolean renderSubs = false;
 
     private HyperlinkListener linkListener = new HyperlinkListener(){
+        @Override
         public void hyperlinkUpdate(HyperlinkEvent event) {
             if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED){
                 handleHyperlink(event.getURL());
@@ -81,10 +94,12 @@ public class OWLDocView extends AbstractBrowserView {
 
 
     private DisposableAction srcAction = new DisposableAction("Show source", null){
+        @Override
         public void actionPerformed(ActionEvent event) {
             handleShowSrc();
         }
 
+        @Override
         public void dispose() {
             // do nothing
         }
@@ -93,6 +108,7 @@ public class OWLDocView extends AbstractBrowserView {
     private OWLHTMLKit kit;
 
 
+    @Override
     protected void initialiseOWLView() throws Exception {
         super.initialiseOWLView();
 
@@ -110,26 +126,30 @@ public class OWLDocView extends AbstractBrowserView {
         addAction(srcAction, "A", "A");
     }
 
+    @Override
     protected String getCSS() {
         return OWLDOC_CSS;
     }
 
+    @Override
     protected void disposeOWLView() {
         super.disposeOWLView();
         getBrowser().removeLinkListener(linkListener);
     }
 
 
+    @Override
     protected void refresh(OWLEntity object) {
 
-        this.currentSelection = object;
+        currentSelection = object;
 
         if (currentSelection != null){
             Runnable generateHTML = new Runnable(){
+                @Override
                 public void run() {
                     try{
-                        HTMLDoclet ren = getRenderer();
-                        ren.renderAll(kit.getURLScheme().getURLForOWLObject(OWLDocView.this.currentSelection), w);
+                        HTMLDoclet ren = getRenderer(currentSelection);
+                        ren.renderAll(kit.getURLScheme().getURLForOWLObject(currentSelection), w);
                         w.close();
                     }
                     catch(Throwable e){
@@ -154,33 +174,24 @@ public class OWLDocView extends AbstractBrowserView {
         }
     }
 
-    private AbstractOWLEntitySummaryHTMLPage getRenderer(){
-        AbstractOWLEntitySummaryHTMLPage ren = null;
-        if (currentSelection instanceof OWLClass){
-            TreeFragment<OWLClass> tree = new OWLClassHierarchyTreeFragment(kit, kit.getOWLServer().getClassHierarchyProvider(), "Class Hierarchy");
-            HierarchyRootDoclet<OWLClass> clsHierarchyRen = new HierarchyRootDoclet<OWLClass>(kit, tree);
-            clsHierarchyRen.setShowSubs(renderSubs);
-            ren = new OWLClassSummaryHTMLPage(kit);
-            ren.setOWLHierarchyRenderer(clsHierarchyRen);
-        }
-        else if (currentSelection instanceof OWLObjectProperty){
-            ren = new OWLObjectPropertySummaryHTMLPage(kit);
-        }
-        else if (currentSelection instanceof OWLDataProperty){
-            ren = new OWLDataPropertySummaryHTMLPage(kit);
-        }
-        else if (currentSelection instanceof OWLIndividual){
-            ren = new OWLIndividualSummaryHTMLPage(kit);
-        }
-        else if (currentSelection instanceof OWLAnnotationProperty){
-            ren = new OWLAnnotationPropertySummaryHTMLPage(kit);
-        }
-        else if (currentSelection instanceof OWLDatatype){
-            ren = new OWLDatatypeSummaryHTMLPage(kit);
+    private HTMLDoclet getRenderer(OWLObject current) {
+        HTMLDoclet ren = null;
+        if (current instanceof OWLClass) {
+            ren = new OWLClassSummaryDoclet(kit);
+        } else if (current instanceof OWLObjectProperty) {
+            ren = new OWLObjectPropertySummaryDoclet(kit);
+        } else if (current instanceof OWLDataProperty) {
+            ren = new OWLDataPropertySummaryDoclet(kit);
+        } else if (current instanceof OWLIndividual) {
+            ren = new OWLIndividualSummaryDoclet(kit);
+        } else if (current instanceof OWLAnnotationProperty) {
+            ren = new OWLAnnotationPropertySummaryDoclet(kit);
+        } else if (current instanceof OWLDatatype) {
+            ren = new OWLDatatypeSummaryDoclet(kit);
         }
 
         if (ren != null){
-            ren.setUserObject(currentSelection);
+            ren.setUserObject(current);
         }
         return ren;
     }
@@ -216,7 +227,7 @@ public class OWLDocView extends AbstractBrowserView {
     }
 
     private void handleShowSrc() {
-        HTMLDoclet ren = getRenderer();
+        HTMLDoclet ren = getRenderer(currentSelection);
         final StringWriter stringWriter = new StringWriter();
         PrintWriter stringRenderer = new PrintWriter(stringWriter);
         ren.renderAll(kit.getURLScheme().getURLForOWLObject(OWLDocView.this.currentSelection), stringRenderer);
