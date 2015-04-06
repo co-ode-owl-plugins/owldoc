@@ -1,5 +1,10 @@
 package org.coode.browser.protege;
 
+import java.awt.event.ActionEvent;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.apache.log4j.Logger;
 import org.coode.html.OWLHTMLKit;
 import org.coode.html.OntologyExporter;
@@ -10,11 +15,6 @@ import org.protege.editor.core.ui.progress.BackgroundTask;
 import org.protege.editor.core.ui.util.NativeBrowserLauncher;
 import org.protege.editor.core.ui.util.UIUtil;
 import org.protege.editor.owl.ui.action.ProtegeOWLAction;
-
-import java.awt.event.ActionEvent;
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 /*
  * Copyright (C) 2007, University of Manchester
@@ -50,9 +50,9 @@ import java.net.URL;
  * <p/>
  */
 public class ExportOWLDocAction extends ProtegeOWLAction {
-
+    private static final long serialVersionUID = 1L;
     // as all URLs in links should be relative, this should not matter
-    private static URL DEFAULT_BASE;
+    protected static URL DEFAULT_BASE;
 
     static {
         try {
@@ -63,11 +63,13 @@ public class ExportOWLDocAction extends ProtegeOWLAction {
         }
     }
 
+    @Override
     public void actionPerformed(ActionEvent actionEvent) {
         final File folder = UIUtil.chooseFolder(getOWLWorkspace(), "Select a base for OWLDoc");
         if (folder != null){
             final BackgroundTask exportTask = ProtegeApplication.getBackgroundTaskManager().startTask("Exporting OWLDoc");
             Runnable export = new Runnable(){
+                @Override
                 public void run() {
                     try {
                         OWLServer svr = new ProtegeServerImpl(getOWLModelManager());
@@ -89,10 +91,12 @@ public class ExportOWLDocAction extends ProtegeOWLAction {
         }
     }
 
-    public void initialise() throws Exception {
+    @Override
+    public void initialise() {
         // do nothing
     }
 
+    @Override
     public void dispose() {
         // do nothing
     }

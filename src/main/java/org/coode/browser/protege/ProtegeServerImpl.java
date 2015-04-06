@@ -23,7 +23,6 @@ import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.util.BidirectionalShortFormProvider;
@@ -65,13 +64,13 @@ import org.semanticweb.owlapi.util.ShortFormProvider;
  */
 public class ProtegeServerImpl implements OWLServer {
 
-    private OWLModelManager mngr;
+    protected OWLModelManager mngr;
     private OWLObjectComparator<OWLObject> comp;
     private HierarchyProvider<OWLClass> toldClassHierarchyReasoner;
     private HierarchyProvider<OWLObjectProperty> toldObjectPropertyHierarchyProvider;
     private HierarchyProvider<OWLDataProperty> toldDataPropertyHierarchyProvider;
     private ShortFormProvider shortformProvider;
-    private Map<String, OWLClassExpressionParser> parserMap = new HashMap<String, OWLClassExpressionParser>();
+    private Map<String, OWLClassExpressionParser> parserMap = new HashMap<>();
     private ServerPropertiesAdapter<ServerProperty> properties;
     private org.coode.owl.mngr.OWLEntityFinder finder;
     private OntologyIRIShortFormProvider ontologyShortFormProvider;
@@ -113,7 +112,7 @@ public class ProtegeServerImpl implements OWLServer {
 
     public HierarchyProvider<OWLClass> getClassHierarchyProvider() {
         if (toldClassHierarchyReasoner == null) {
-            toldClassHierarchyReasoner = new HierarchyProviderAdapter<OWLClass>(
+            toldClassHierarchyReasoner = new HierarchyProviderAdapter<>(
                     mngr.getOWLHierarchyManager()
                             .getOWLClassHierarchyProvider());
         }
@@ -123,7 +122,7 @@ public class ProtegeServerImpl implements OWLServer {
     public HierarchyProvider<OWLObjectProperty>
             getOWLObjectPropertyHierarchyProvider() {
         if (toldObjectPropertyHierarchyProvider == null) {
-            toldObjectPropertyHierarchyProvider = new HierarchyProviderAdapter<OWLObjectProperty>(
+            toldObjectPropertyHierarchyProvider = new HierarchyProviderAdapter<>(
                     mngr.getOWLHierarchyManager()
                             .getOWLObjectPropertyHierarchyProvider());
         }
@@ -133,7 +132,7 @@ public class ProtegeServerImpl implements OWLServer {
     public HierarchyProvider<OWLDataProperty>
             getOWLDataPropertyHierarchyProvider() {
         if (toldDataPropertyHierarchyProvider == null) {
-            toldDataPropertyHierarchyProvider = new HierarchyProviderAdapter<OWLDataProperty>(
+            toldDataPropertyHierarchyProvider = new HierarchyProviderAdapter<>(
                     mngr.getOWLHierarchyManager()
                             .getOWLDataPropertyHierarchyProvider());
         }
@@ -143,7 +142,7 @@ public class ProtegeServerImpl implements OWLServer {
     @Override
     public Comparator<OWLObject> getComparator() {
         if (comp == null) {
-            comp = new OWLObjectComparator<OWLObject>(this);
+            comp = new OWLObjectComparator<>(this);
         }
         return comp;
     }
@@ -173,7 +172,7 @@ public class ProtegeServerImpl implements OWLServer {
     public OntologyIRIShortFormProvider getOntologyShortFormProvider() {
         if (ontologyShortFormProvider == null) {
             ontologyShortFormProvider = new OntologyIRIShortFormProvider() {
-
+                private static final long serialVersionUID = 1L;
                 @Override
                 public String getShortForm(OWLOntology owlOntology) {
                     return mngr.getRendering(owlOntology);
@@ -202,7 +201,7 @@ public class ProtegeServerImpl implements OWLServer {
     @Override
     public ServerPropertiesAdapter<ServerProperty> getProperties() {
         if (properties == null) {
-            properties = new ServerPropertiesAdapterImpl<ServerProperty>(
+            properties = new ServerPropertiesAdapterImpl<>(
                     new ServerPropertiesImpl());
         }
         return properties;
@@ -226,8 +225,7 @@ public class ProtegeServerImpl implements OWLServer {
     }
 
     @Override
-    public OWLOntology loadOntology(URI ontPhysicalURI)
-            throws OWLOntologyCreationException {
+    public OWLOntology loadOntology(URI ontPhysicalURI) {
         throw new UnsupportedOperationException();
     }
 
@@ -274,8 +272,7 @@ public class ProtegeServerImpl implements OWLServer {
     }
 
     @Override
-    public OWLOntology reloadOntology(OWLOntology ontology)
-            throws OWLOntologyCreationException {
+    public OWLOntology reloadOntology(OWLOntology ontology) {
         throw new UnsupportedOperationException();
     }
 

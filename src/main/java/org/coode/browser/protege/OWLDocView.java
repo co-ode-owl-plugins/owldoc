@@ -71,17 +71,15 @@ import org.semanticweb.owlapi.model.OWLObjectProperty;
  * <p/>
  */
 public class OWLDocView extends AbstractBrowserView {
-
+    private static final long serialVersionUID = 1L;
     private static final Logger logger = Logger.getLogger(OWLDocView.class);
 
     private static final String OWLDOC_CSS = "resources/owldocview.css";
 
     private PipedReader r;
-    private PrintWriter w;
+    protected PrintWriter w;
 
-    private OWLObject currentSelection;
-
-    private boolean renderSubs = false;
+    protected OWLObject currentSelection;
 
     private HyperlinkListener linkListener = new HyperlinkListener(){
         @Override
@@ -94,6 +92,7 @@ public class OWLDocView extends AbstractBrowserView {
 
 
     private DisposableAction srcAction = new DisposableAction("Show source", null){
+        private static final long serialVersionUID = 1L;
         @Override
         public void actionPerformed(ActionEvent event) {
             handleShowSrc();
@@ -105,7 +104,7 @@ public class OWLDocView extends AbstractBrowserView {
         }
     };
 
-    private OWLHTMLKit kit;
+    protected OWLHTMLKit kit;
 
 
     @Override
@@ -148,8 +147,7 @@ public class OWLDocView extends AbstractBrowserView {
                 @Override
                 public void run() {
                     try{
-                        HTMLDoclet ren = getRenderer(currentSelection);
-                        ren.renderAll(kit.getURLScheme().getURLForOWLObject(currentSelection), w);
+                        getRenderer(currentSelection).renderAll(kit.getURLScheme().getURLForOWLObject(currentSelection), w);
                         w.close();
                     }
                     catch(Throwable e){
@@ -174,20 +172,21 @@ public class OWLDocView extends AbstractBrowserView {
         }
     }
 
-    private HTMLDoclet getRenderer(OWLObject current) {
-        HTMLDoclet ren = null;
+    @SuppressWarnings("unchecked")
+    protected <O extends OWLObject> HTMLDoclet<O> getRenderer(O current) {
+        HTMLDoclet<O> ren = null;
         if (current instanceof OWLClass) {
-            ren = new OWLClassSummaryDoclet(kit);
+            ren = (HTMLDoclet<O>) new OWLClassSummaryDoclet(kit);
         } else if (current instanceof OWLObjectProperty) {
-            ren = new OWLObjectPropertySummaryDoclet(kit);
+            ren = (HTMLDoclet<O>) new OWLObjectPropertySummaryDoclet(kit);
         } else if (current instanceof OWLDataProperty) {
-            ren = new OWLDataPropertySummaryDoclet(kit);
+            ren = (HTMLDoclet<O>) new OWLDataPropertySummaryDoclet(kit);
         } else if (current instanceof OWLIndividual) {
-            ren = new OWLIndividualSummaryDoclet(kit);
+            ren = (HTMLDoclet<O>) new OWLIndividualSummaryDoclet(kit);
         } else if (current instanceof OWLAnnotationProperty) {
-            ren = new OWLAnnotationPropertySummaryDoclet(kit);
+            ren = (HTMLDoclet<O>) new OWLAnnotationPropertySummaryDoclet(kit);
         } else if (current instanceof OWLDatatype) {
-            ren = new OWLDatatypeSummaryDoclet(kit);
+            ren = (HTMLDoclet<O>) new OWLDatatypeSummaryDoclet(kit);
         }
 
         if (ren != null){
@@ -210,24 +209,22 @@ public class OWLDocView extends AbstractBrowserView {
     }
 
 
-    private void handleHyperlink(URL linkURL) {
+    protected void handleHyperlink(URL linkURL) {
         if (!linkURL.equals(kit.getURLScheme().getURLForOWLObject(currentSelection))){
             if (linkURL.toString().endsWith("#")){ //@@TODO tidyup - this is a hack for now
-                renderSubs = true;
                 final OWLObject owlObject = kit.getURLScheme().getOWLObjectForURL(linkURL);
                 if (owlObject instanceof OWLEntity){
                     refresh((OWLEntity)owlObject);
                 }
             }
             else{
-                renderSubs = false;
                 updateGlobalSelection(linkURL);
             }
         }
     }
 
-    private void handleShowSrc() {
-        HTMLDoclet ren = getRenderer(currentSelection);
+    protected void handleShowSrc() {
+        HTMLDoclet<OWLObject> ren = getRenderer(currentSelection);
         final StringWriter stringWriter = new StringWriter();
         PrintWriter stringRenderer = new PrintWriter(stringWriter);
         ren.renderAll(kit.getURLScheme().getURLForOWLObject(OWLDocView.this.currentSelection), stringRenderer);

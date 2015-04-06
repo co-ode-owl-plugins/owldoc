@@ -52,31 +52,37 @@ public class HierarchyProviderAdapter<E extends OWLEntity> implements HierarchyP
     }
 
 
+    @Override
     public Set<E> getParents(E e) {
         return provider.getParents(e);
     }
 
 
+    @Override
     public Set<E> getChildren(E e) {
         return provider.getChildren(e);
     }
 
 
+    @Override
     public Set<E> getEquivalents(E e) {
         return provider.getEquivalents(e);
     }
 
 
+    @Override
     public Set<E> getDescendants(E e) {
         return provider.getDescendants(e);
     }
 
 
+    @Override
     public Set<E> getAncestors(E e) {
         return provider.getAncestors(e);
     }
 
 
+    @Override
     public void dispose() {
         this.provider = null;
     }

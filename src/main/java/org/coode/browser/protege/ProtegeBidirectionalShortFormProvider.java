@@ -1,9 +1,5 @@
 package org.coode.browser.protege;
 
-import org.protege.editor.owl.model.OWLModelManager;
-import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.util.BidirectionalShortFormProvider;
-
 import java.util.Set;
 /*
 * Copyright (C) 2007, University of Manchester
@@ -28,6 +24,10 @@ import java.util.Set;
 * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+import org.protege.editor.owl.model.OWLModelManager;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.util.BidirectionalShortFormProvider;
+
 /**
  * Author: drummond<br>
  * http://www.cs.man.ac.uk/~drummond/<br><br>
@@ -46,11 +46,13 @@ public class ProtegeBidirectionalShortFormProvider implements BidirectionalShort
     }
 
 
+    @Override
     public Set<OWLEntity> getEntities(String s) {
         return mngr.getOWLEntityFinder().getMatchingOWLEntities(s);
     }
 
 
+    @Override
     public OWLEntity getEntity(String s) {
         for (OWLEntity entity : mngr.getOWLEntityFinder().getMatchingOWLEntities(s)){
             return entity;
@@ -59,16 +61,19 @@ public class ProtegeBidirectionalShortFormProvider implements BidirectionalShort
     }
 
 
+    @Override
     public Set<String> getShortForms() {
         return mngr.getOWLEntityFinder().getOWLEntityRenderings();
     }
 
 
+    @Override
     public String getShortForm(OWLEntity owlEntity) {
         return mngr.getRendering(owlEntity);
     }
 
 
+    @Override
     public void dispose() {
         mngr = null;
     }

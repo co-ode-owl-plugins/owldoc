@@ -7,12 +7,19 @@
     <artifactId>co-ode-owl-plugins</artifactId>
     <version>4.0.0-SNAPSHOT</version>
   </parent>
-  <groupId>net.sourceforge.owlapi</groupId>
   <artifactId>owldoc</artifactId>
-  <version>4.0.0-SNAPSHOT</version>
   <name>owldoc</name>
   <url>http://maven.apache.org</url>
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
+  <dependencies>
+  	<dependency>
+  		<groupId>net.sourceforge.owlapi</groupId>
+  		<artifactId>ontology-browser-owlmanager</artifactId>
+  		<version>4.0.0-SNAPSHOT</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>net.sourceforge.owlapi</groupId>
+  		<artifactId>ontology-browser-owlhtml</artifactId>
+  		<version>4.0.0-SNAPSHOT</version>
+  	</dependency>
+  </dependencies>
 </project>

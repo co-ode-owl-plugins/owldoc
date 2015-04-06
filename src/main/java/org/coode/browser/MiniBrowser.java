@@ -1,16 +1,8 @@
 package org.coode.browser;
 
-import org.protege.editor.core.ui.util.Icons;
-import org.protege.editor.core.ui.util.NativeBrowserLauncher;
-
-import javax.swing.*;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.html.HTMLDocument;
-import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.text.html.StyleSheet;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -20,6 +12,25 @@ import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Stack;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JEditorPane;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.JToolBar;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.StyleSheet;
+
+import org.protege.editor.core.ui.util.Icons;
+import org.protege.editor.core.ui.util.NativeBrowserLauncher;
 
 /*
  * Copyright (C) 2007, University of Manchester
@@ -55,15 +66,15 @@ import java.util.Stack;
  * <p/>
  */
 public class MiniBrowser extends JComponent{
-
+    private static final long serialVersionUID = 1L;
 //    private static final String SPECIAL_LINK = "protege-open-in-browser";
 
     private JToolBar toolbar;
-    private JTextField addressField;
+    protected JTextField addressField;
     private JEditorPane docPanel;
     private HTMLEditorKit eKit = new HTMLEditorKit();
 
-    private Stack<URL> history = new Stack<URL>();
+    protected Stack<URL> history = new Stack<>();
 
 //    private List<BrowserPageListener> pageListeners = new ArrayList<BrowserPageListener>();
 
@@ -75,11 +86,11 @@ public class MiniBrowser extends JComponent{
 
     private Action launchAction;
 
-    private boolean navigateActive = true;
+    protected boolean navigateActive = true;
 
     // used to load pages in background
-    private Runnable currentLoader;
-    private Runnable waitingLoader;
+    protected Runnable currentLoader;
+    protected Runnable waitingLoader;
 
     public MiniBrowser() {
         super();
@@ -91,6 +102,7 @@ public class MiniBrowser extends JComponent{
         docPanel.setBackground(Color.WHITE);
 
         linkListener = new HyperlinkListener(){
+            @Override
             public void hyperlinkUpdate(HyperlinkEvent event) {
                 if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                     if (navigateActive){
@@ -150,6 +162,7 @@ public class MiniBrowser extends JComponent{
 
                 // load the pages in another thread so they don't interfere
                 waitingLoader = new Runnable(){
+                    @Override
                     public void run() {
                         loadPage();
 
@@ -183,7 +196,7 @@ public class MiniBrowser extends JComponent{
         }
     }
 
-    private void loadPage() {
+    protected void loadPage() {
         final URL loadURL = getURL();
         System.out.print("loading page: " + loadURL);
         try {
@@ -240,6 +253,7 @@ public class MiniBrowser extends JComponent{
 //        pageListeners.remove(l);
 //    }
 
+    @Override
     protected void finalize() throws Throwable {
         super.finalize();
         if (linkListener != null){
@@ -252,6 +266,7 @@ public class MiniBrowser extends JComponent{
 
     private void setupToolbar() {
         addressListener = new KeyAdapter(){
+            @Override
             public void keyPressed(KeyEvent keyEvent) {
                 if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER){
                     String address = addressField.getText();
@@ -276,6 +291,8 @@ public class MiniBrowser extends JComponent{
         toolbar.setFloatable(false);
 
         backAction = new AbstractAction("Back", Icons.getIcon("back.gif")){
+            private static final long serialVersionUID = 1L;
+            @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if (history.size() > 1){
                     history.pop();
@@ -286,6 +303,8 @@ public class MiniBrowser extends JComponent{
         toolbar.add(new JButton(backAction));
 
         launchAction = new AbstractAction("Open in browser", Icons.getIcon("object.find.gif")) {
+            private static final long serialVersionUID = 1L;
+            @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 NativeBrowserLauncher.openURL(history.peek().toString());
             }

@@ -1,5 +1,11 @@
 package org.coode.browser.protege;
 
+import java.awt.BorderLayout;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+
 import org.coode.browser.MiniBrowser;
 import org.protege.editor.owl.model.event.EventType;
 import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
@@ -7,15 +13,8 @@ import org.protege.editor.owl.model.event.OWLModelManagerListener;
 import org.protege.editor.owl.model.selection.OWLSelectionModelListener;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.model.OWLException;
 import org.semanticweb.owlapi.model.OWLOntologyChange;
 import org.semanticweb.owlapi.model.OWLOntologyChangeListener;
-
-import java.awt.*;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 
 /*
  * Copyright (C) 2007, University of Manchester
@@ -51,16 +50,18 @@ import java.io.Reader;
  * <p/>
  */
 public abstract class AbstractBrowserView extends AbstractOWLViewComponent {
-
-    private MiniBrowser browser;
+    private static final long serialVersionUID = 1L;
+    protected MiniBrowser browser;
 
     private OWLSelectionModelListener selectionListener = new OWLSelectionModelListener(){
-        public void selectionChanged() throws Exception {
+        @Override
+        public void selectionChanged() {
             refresh(getOWLWorkspace().getOWLSelectionModel().getSelectedEntity());
         }
     };
 
     private OWLModelManagerListener modelManagerListener = new OWLModelManagerListener(){
+        @Override
         public void handleChange(OWLModelManagerChangeEvent event) {
             if (event.isType(EventType.ACTIVE_ONTOLOGY_CHANGED)){
                 browser.setURL(null);
@@ -69,11 +70,13 @@ public abstract class AbstractBrowserView extends AbstractOWLViewComponent {
     };
 
     private OWLOntologyChangeListener ontologyModelChangeListener = new OWLOntologyChangeListener(){
-        public void ontologiesChanged(java.util.List<? extends OWLOntologyChange> changes) throws OWLException {
+        @Override
+        public void ontologiesChanged(java.util.List<? extends OWLOntologyChange> changes) {
             refresh(getOWLWorkspace().getOWLSelectionModel().getSelectedEntity());
         }
     };
 
+    @Override
     protected void initialiseOWLView() throws Exception {
         setLayout(new BorderLayout(6, 6));
 
@@ -95,6 +98,7 @@ public abstract class AbstractBrowserView extends AbstractOWLViewComponent {
 
     protected abstract String getCSS();
 
+    @Override
     protected void disposeOWLView() {
         getOWLWorkspace().getOWLSelectionModel().removeListener(selectionListener);
         getOWLModelManager().removeListener(modelManagerListener);

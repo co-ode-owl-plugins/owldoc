@@ -43,11 +43,13 @@ public class ProtegeShortformProviderWrapper implements ShortFormProvider {
     }
 
 
+    @Override
     public String getShortForm(OWLEntity entity) {
         return mngr.getRendering(entity);
     }
 
 
+    @Override
     public void dispose() {
         // do nothing
     }

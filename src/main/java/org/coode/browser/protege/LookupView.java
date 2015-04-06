@@ -1,17 +1,18 @@
 package org.coode.browser.protege;
 
-import org.protege.editor.core.ProtegeApplication;
-import org.protege.editor.owl.ui.UIHelper;
-import org.semanticweb.owlapi.model.OWLEntity;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.swing.JComboBox;
+
+import org.protege.editor.core.ProtegeApplication;
+import org.protege.editor.owl.ui.UIHelper;
+import org.semanticweb.owlapi.model.OWLEntity;
 
 /*
  * Copyright (C) 2007, University of Manchester
@@ -47,10 +48,10 @@ import java.util.Map;
  * <p/>
  */
 public class LookupView extends AbstractBrowserView {
-
+    private static final long serialVersionUID = 1L;
     private static final String PROTEGE_DEFAULT_CSS = "resources/protege-default.css";
 
-    private static final String[] DEFAULT_LABELS = {
+    protected static final String[] DEFAULT_LABELS = {
             "Wordnet",
             "Wikipedia",
             "Google",
@@ -67,11 +68,12 @@ public class LookupView extends AbstractBrowserView {
              //"http://www.altavista.com/web/results?q=",
              ""};
 
-    private static final Map<String, String> map = new HashMap<String, String>();
+    protected static final Map<String, String> map = new HashMap<>();
 
-    private JComboBox resourceCombo;
+    protected JComboBox<String> resourceCombo;
 
     private ItemListener itemListener = new ItemListener(){
+        @Override
         public void itemStateChanged(ItemEvent itemEvent) {
             if (itemEvent.getStateChange() == ItemEvent.SELECTED){
                 if (itemEvent.getItem().equals("...")){
@@ -93,13 +95,14 @@ public class LookupView extends AbstractBrowserView {
         }
     };
 
+    @Override
     protected void initialiseOWLView() throws Exception {
         super.initialiseOWLView();
 
         // best without the toolbar?
         //getBrowser().showToolBar(true);
 
-        resourceCombo = new JComboBox();
+        resourceCombo = new JComboBox<>();
 
         for (int i=0; i< DEFAULT_LABELS.length; i++) {
             map.put(DEFAULT_LABELS[i], DEFAULT_BASES[i]);
@@ -112,15 +115,18 @@ public class LookupView extends AbstractBrowserView {
         refresh(getOWLWorkspace().getOWLSelectionModel().getSelectedEntity());
     }
 
+    @Override
     protected String getCSS() {
         return PROTEGE_DEFAULT_CSS;
     }
 
+    @Override
     protected void disposeOWLView() {
         super.disposeOWLView();
         resourceCombo.removeItemListener(itemListener);
     }
 
+    @Override
     protected void refresh(OWLEntity entity) {
         if (entity != null){
             String base = map.get(resourceCombo.getSelectedItem());
