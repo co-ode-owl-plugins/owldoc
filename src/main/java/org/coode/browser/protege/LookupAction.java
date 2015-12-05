@@ -42,8 +42,7 @@ public class LookupAction extends ProtegeOWLAction {
     private static final long serialVersionUID = 1L;
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        getOWLEditorKit().getWorkspace().showResultsView("org.coode.browser.LookupView",
-                                                            true, Workspace.BOTTOM_RESULTS_VIEW);
+        getOWLEditorKit().getWorkspace().showResultsView("org.coode.browser.LookupView", true, Workspace.BOTTOM_RESULTS_VIEW);
     }
 
     @Override

@@ -1,18 +1,6 @@
 package org.coode.browser.protege;
 
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.io.PipedReader;
-import java.io.PipedWriter;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.net.URL;
-
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
+import org.protege.editor.core.ui.util.NativeBrowserLauncher;
 
 import org.apache.log4j.Logger;
 import org.coode.html.OWLHTMLKit;
@@ -26,8 +14,6 @@ import org.coode.html.doclet.OWLObjectPropertySummaryDoclet;
 import org.coode.html.impl.OWLHTMLKitImpl;
 import org.coode.html.impl.OWLHTMLProperty;
 import org.coode.owl.mngr.OWLServer;
-import org.protege.editor.core.ui.util.NativeBrowserLauncher;
-import org.protege.editor.core.ui.view.DisposableAction;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataProperty;
@@ -36,6 +22,19 @@ import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
+
+import java.awt.Dimension;
+import java.io.PipedReader;
+import java.io.PipedWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.net.URL;
+
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 /*
  * Copyright (C) 2007, University of Manchester
@@ -74,7 +73,7 @@ public class OWLDocView extends AbstractBrowserView {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = Logger.getLogger(OWLDocView.class);
 
-    private static final String OWLDOC_CSS = "resources/owldocview.css";
+    private static final String OWLDOC_CSS = "owldocview.css";
 
     private PipedReader r;
     protected PrintWriter w;
@@ -90,19 +89,21 @@ public class OWLDocView extends AbstractBrowserView {
         }
     };
 
-
-    private DisposableAction srcAction = new DisposableAction("Show source", null){
-        private static final long serialVersionUID = 1L;
-        @Override
-        public void actionPerformed(ActionEvent event) {
-            handleShowSrc();
-        }
-
-        @Override
-        public void dispose() {
-            // do nothing
-        }
-    };
+    /*
+     * Remove comments for debugging
+     */
+//    private DisposableAction srcAction = new DisposableAction("Show source", null){
+//        private static final long serialVersionUID = 1L;
+//        @Override
+//        public void actionPerformed(ActionEvent event) {
+//            handleShowSrc();
+//        }
+//
+//        @Override
+//        public void dispose() {
+//            // do nothing
+//        }
+//    };
 
     protected OWLHTMLKit kit;
 
@@ -122,7 +123,7 @@ public class OWLDocView extends AbstractBrowserView {
 
         refresh(getOWLWorkspace().getOWLSelectionModel().getSelectedEntity());
 
-        addAction(srcAction, "A", "A");
+//        addAction(srcAction, "A", "A");
     }
 
     @Override

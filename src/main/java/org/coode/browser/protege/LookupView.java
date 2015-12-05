@@ -1,5 +1,10 @@
 package org.coode.browser.protege;
 
+import org.protege.editor.core.ui.error.ErrorLogPanel;
+import org.protege.editor.owl.ui.UIHelper;
+
+import org.semanticweb.owlapi.model.OWLEntity;
+
 import java.awt.BorderLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -9,10 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JComboBox;
-
-import org.protege.editor.core.ProtegeApplication;
-import org.protege.editor.owl.ui.UIHelper;
-import org.semanticweb.owlapi.model.OWLEntity;
 
 /*
  * Copyright (C) 2007, University of Manchester
@@ -87,7 +88,7 @@ public class LookupView extends AbstractBrowserView {
                         }
                     }
                     catch (Exception e) {
-                        ProtegeApplication.getErrorLog().handleError(Thread.currentThread(), e);                        
+                        ErrorLogPanel.showErrorDialog(e);
                     }
                 }
                 refresh(getOWLWorkspace().getOWLSelectionModel().getSelectedEntity());
@@ -171,7 +172,7 @@ public class LookupView extends AbstractBrowserView {
                 getBrowser().setURL(query);
             }
             catch (Exception e) {
-                ProtegeApplication.getErrorLog().handleError(Thread.currentThread(), e);
+                ErrorLogPanel.showErrorDialog(e);
             }
         }
     }

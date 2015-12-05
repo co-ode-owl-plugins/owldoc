@@ -1,20 +1,22 @@
 package org.coode.browser.protege;
 
-import java.awt.event.ActionEvent;
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
+import org.protege.editor.core.ProtegeApplication;
+import org.protege.editor.core.ui.error.ErrorLogPanel;
+import org.protege.editor.core.ui.progress.BackgroundTask;
+import org.protege.editor.core.ui.util.NativeBrowserLauncher;
+import org.protege.editor.core.ui.util.UIUtil;
+import org.protege.editor.owl.ui.action.ProtegeOWLAction;
 
 import org.apache.log4j.Logger;
 import org.coode.html.OWLHTMLKit;
 import org.coode.html.OntologyExporter;
 import org.coode.html.impl.OWLHTMLKitImpl;
 import org.coode.owl.mngr.OWLServer;
-import org.protege.editor.core.ProtegeApplication;
-import org.protege.editor.core.ui.progress.BackgroundTask;
-import org.protege.editor.core.ui.util.NativeBrowserLauncher;
-import org.protege.editor.core.ui.util.UIUtil;
-import org.protege.editor.owl.ui.action.ProtegeOWLAction;
+
+import java.awt.event.ActionEvent;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /*
  * Copyright (C) 2007, University of Manchester
@@ -81,7 +83,7 @@ public class ExportOWLDocAction extends ProtegeOWLAction {
                         svr.dispose();
                     }
                     catch (Throwable e) {
-                        ProtegeApplication.getErrorLog().handleError(Thread.currentThread(), e);
+                        ErrorLogPanel.showErrorDialog(e);
                     }
                 }
             };

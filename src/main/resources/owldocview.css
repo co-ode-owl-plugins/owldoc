@@ -35,7 +35,7 @@
  * Please note that java support for CSS is fairly basic, so changing these defaults may not look as you expect
  */
 
-body {font-family: Verdana, Arial, sans-serif; font-size: 10pt; padding: 5px;}
+body {font-family: Verdana, Arial, sans-serif; font-size: 11pt; padding: 5px;}
 
 img {border: none;}
 img.button {position: relative; top: 8px;}
@@ -56,12 +56,14 @@ img.button {position: relative; top: 8px;}
 .max {color: #770077;}
 .exactly {color: #770077;}
 
-div {border-width: 1px; border-style: solid; border-color: #c7cfd5; background: #f1f5f9; width: 95%; padding: 5px;}
+.codebox {margin-left: 8px; margin-right: 3px; margin-bottom: 3px; border-width: 1px; border-style: solid; border-color: #c7cfd5; background: #f1f5f9; padding: 4px;}
 
 #queryform {background: #ddddff; padding: 5px;}
 
-h1 {margin-top: 5px; font-size: 14pt; font-weight: bold;}
-h2 {margin-top: 5px; margin-bottom: 3px; font-size: 12pt; font-weight: normal;}
+h1 {margin-top: 5px; margin-bottom: 6px; font-size: 16pt; font-weight: bold;}
+h2 {margin-top: 5px; margin-bottom: 6px; font-size: 14pt; font-weight: bold;}
+h3 {margin-left: 8px; margin-top: 5px; margin-bottom: 3px; font-size: 12pt; font-weight: normal;}
+h4 {margin-left: 8px; margin-top: 5px; margin-bottom: 3px; font-size: 12pt; font-weight: normal;}
 
 a {text-decoration: none;}
 a.subsexpand {color: #555555; font-size: 7pt; text-decoration: underline; line-height: 180%;}
