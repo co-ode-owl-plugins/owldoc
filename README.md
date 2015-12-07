@@ -7,7 +7,7 @@ A Protégé Desktop plugin that creates a bundle of static HTML pages for publis
 
 Installation
 ------------
-By default OWLViz comes together with Protégé installation bundle. Any new release of the plugin will be automatically updated using Protégé auto-update mechanism. 
+By default OWLDoc comes together with Protégé installation bundle. Any new release of the plugin will be automatically updated using Protégé auto-update mechanism. 
 
 The OWLDoc plugin offers two features: (1) exporting HTML pages and (2) window viewing within Protégé. The page rendering will provide all the neccessary links for resource navigation of your ontology.
 
