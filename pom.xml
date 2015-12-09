@@ -56,6 +56,13 @@
         </mailingList>
     </mailingLists>
 
+    <scm>
+        <connection>scm:git:git@github.com:co-ode-owl-plugins/owldoc.git</connection>
+        <developerConnection>scm:git:git@github.com:co-ode-owl-plugins/owldoc.git</developerConnection>
+        <url>https://github.com/co-ode-owl-plugins/owldoc</url>
+        <tag>HEAD</tag>
+    </scm>
+
     <dependencies>
         <dependency>
             <groupId>edu.stanford.protege</groupId>
