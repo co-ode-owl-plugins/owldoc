@@ -74,14 +74,14 @@
             <version>5.0.0-beta-19</version>
         </dependency>
         <dependency>
-            <groupId>net.sourceforge.owlapi</groupId>
+            <groupId>edu.stanford.protege</groupId>
             <artifactId>ontology-browser-owlmanager</artifactId>
-            <version>4.1.0</version>
+            <version>4.2.0</version>
         </dependency>
         <dependency>
-            <groupId>net.sourceforge.owlapi</groupId>
+            <groupId>edu.stanford.protege</groupId>
             <artifactId>ontology-browser-owlhtml</artifactId>
-            <version>4.1.0</version>
+            <version>4.2.0</version>
         </dependency>
     </dependencies>
 
