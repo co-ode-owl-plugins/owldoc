@@ -105,6 +105,9 @@
                     <instructions>
                         <Bundle-Activator>org.protege.editor.owl.ProtegeOWL</Bundle-Activator>
                         <Bundle-ClassPath>.</Bundle-ClassPath>
+                        <Bundle-Version>${project.version}</Bundle-Version>
+                        <Bundle-Description>OWLDoc export and view</Bundle-Description>
+                        <Bundle-Name>Browser View (OWLDoc)</Bundle-Name>
                         <Bundle-SymbolicName>org.coode.browser;singleton:=true</Bundle-SymbolicName>
                         <Bundle-Vendor>The Protege Development Team</Bundle-Vendor>
                         <Embed-Dependency>
@@ -112,8 +115,6 @@
                             ontology-browser-owlhtml
                         </Embed-Dependency>
                         <Import-Package>
-                            junit.framework;resolution:=optional,
-                            org.junit.*;resolution:=optional,
                             org.apache.log4j.*;version="[1.2,2)",
                             org.protege.editor.core.*;version="5.0.0", <!-- equivalent to [5.0.0,infinity) -->
                             org.protege.editor.owl.*;version="5.0.0",
