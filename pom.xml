@@ -115,6 +115,8 @@
                             ontology-browser-owlhtml
                         </Embed-Dependency>
                         <Import-Package>
+                            junit.framework;resolution:=optional,
+                            org.junit.*;resolution:=optional,
                             org.apache.log4j.*;version="[1.2,2)",
                             org.protege.editor.core.*;version="5.0.0", <!-- equivalent to [5.0.0,infinity) -->
                             org.protege.editor.owl.*;version="5.0.0",
