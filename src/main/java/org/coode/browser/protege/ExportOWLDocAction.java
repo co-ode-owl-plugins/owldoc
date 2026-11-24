@@ -73,17 +73,26 @@ public class ExportOWLDocAction extends ProtegeOWLAction {
             Runnable export = new Runnable(){
                 @Override
                 public void run() {
+                    OWLServer svr = null;
                     try {
-                        OWLServer svr = new ProtegeServerImpl(getOWLModelManager());
+                        svr = new ProtegeServerImpl(getOWLModelManager());
                         OWLHTMLKit owlhtmlKit = new OWLHTMLKitImpl("owldoc-kit", svr, DEFAULT_BASE);
                         OntologyExporter exporter = new OntologyExporter(owlhtmlKit);
                         File index = exporter.export(folder);
-                        ProtegeApplication.getBackgroundTaskManager().endTask(exportTask);
-                        NativeBrowserLauncher.openURL("file://" + index.getPath());
-                        svr.dispose();
+                        NativeBrowserLauncher.openURL(index.toURI().toString());
                     }
                     catch (Throwable e) {
                         ErrorLogPanel.showErrorDialog(e);
+                    }
+                    finally {
+                        try {
+                            if (svr != null) {
+                                svr.dispose();
+                            }
+                        }
+                        finally {
+                            ProtegeApplication.getBackgroundTaskManager().endTask(exportTask);
+                        }
                     }
                 }
             };
