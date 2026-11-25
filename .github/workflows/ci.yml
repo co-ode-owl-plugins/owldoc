@@ -7,21 +7,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-        with:
-          path: owldoc
-      - uses: actions/checkout@v5
-        with:
-          repository: co-ode-owl-plugins/ontology-browser
-          ref: c653faacd22128a22292ce8184ce510e0c0233f7
-          path: ontology-browser
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '11'
           cache: maven
-      - name: Install paired Ontology Browser snapshot
-        working-directory: ontology-browser
-        run: mvn --batch-mode clean install
       - name: Verify OWLDoc
-        working-directory: owldoc
         run: mvn --batch-mode clean verify

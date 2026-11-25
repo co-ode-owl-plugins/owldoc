@@ -27,14 +27,22 @@ This feature is available by selecting **Window > Views > Miscellaneous Views > 
 
 ## Protégé 6 migration
 
-OWLDoc 4 targets Protégé 6.0.0-alpha-1, OWL API 5.5.1, Java 11, and Ontology Browser 5. Protégé 5 requires OWLDoc 3.
+OWLDoc 4 targets Protégé 6.0.0-alpha-1, OWL API 5.5.1, Java 11, with its ontology-management and HTML-export code included in this repository. Protégé 5 requires OWLDoc 3.
 
-For a paired development build, first run `mvn --batch-mode clean install` in the Ontology Browser 5 migration checkout. Then run `mvn --batch-mode clean verify` in this repository. The plugin tests verify the short-form Set/Stream adapters and a real export through the Protégé model adapter.
+Run `mvn --batch-mode clean verify` in this repository. No separate Ontology Browser build or artifact is required. The plugin tests verify the short-form Set/Stream adapters and a real export through the Protégé model adapter.
 
-Install `target/owldoc-4.0.0-SNAPSHOT.jar` in an assembled Protégé 6 app's plugins directory, removing any older OWLDoc JAR first. It embeds the two required Ontology Browser modules.
+Install `target/owldoc-4.0.0.jar` in an assembled Protégé 6 app's plugins directory, removing any older OWLDoc JAR first. The JAR contains the ontology-management and HTML-export classes directly. See `NOTICE` for their origin and retained license notices.
 
 For manual verification, open `src/test/resources/smoke-test/owldoc-smoke-test.ofn` with its adjacent import ontology and catalog. Use **Tools > Export OWLDoc…**, choosing an empty output directory, preferably with spaces in its name. Check the generated class, property, and individual pages, imported entities, Unicode filenames, French annotation text, and navigation links. Also add **Window > Views > Miscellaneous Views > OWLDoc**, select entities, and follow its links to verify selection synchronization.
 
 The same fixture is available at `/tmp/owldoc-qa-fixture/owldoc-smoke-test.ofn` in the QA environment. Publication and distribution/registry integration follow successful manual testing. Tracking: https://github.com/protegeproject/protege/issues/1363.
 
 Static exports paginate Usage lists larger than 500 references. The entity page contains the first 500 references, with further pages linked by ordinary offline-compatible Previous/Next and numbered links. All references are retained; each extra page keeps the entity sidebar and context. Cancellation is checked between usage pages. The in-app viewer keeps its existing rendering.
+
+## Publishing
+
+Publishing follows the Protégé plugin workflow used by OntoGraf. A numeric `major.minor.patch` tag triggers `.github/workflows/publish.yml`, or an existing tag can be selected with `workflow_dispatch`. The tag must match the POM version. The `release` Maven profile signs artifacts with GPG and publishes through the Maven Central Portal, waiting for publication. The workflow uses the standard `GPG_PRIVATE_KEY`, `GPG_PASSPHRASE`, `OSSRH_USERNAME`, and `OSSRH_TOKEN` secrets; secret values are never stored in the repository.
+
+Releases include source and Javadoc artifacts. GitHub release notes and the OWLDoc plugin JAR are published with the matching tag, followed by the Protégé 6 distribution and registry updates.
+
+The former owlmanager and owlhtml code is maintained directly under `src/main/java/org/coode/owl` and `src/main/java/org/coode/html`, with its regression tests and resources. OWLDoc is built and released as one artifact; the servlet-based ontology browser is not included.
