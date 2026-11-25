@@ -1,9 +1,6 @@
 package org.coode.browser.protege;
 
 import org.protege.editor.core.ProtegeApplication;
-import org.protege.editor.core.ui.error.ErrorLogPanel;
-import org.protege.editor.core.ui.progress.BackgroundTask;
-import org.protege.editor.core.ui.util.NativeBrowserLauncher;
 import org.protege.editor.core.ui.util.UIUtil;
 import org.protege.editor.owl.ui.action.ProtegeOWLAction;
 
@@ -14,6 +11,8 @@ import org.coode.html.impl.OWLHTMLKitImpl;
 import org.coode.owl.mngr.OWLServer;
 
 import java.awt.event.ActionEvent;
+import javax.swing.SwingUtilities;
+import java.util.concurrent.CancellationException;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -53,6 +52,7 @@ import java.net.URL;
  */
 public class ExportOWLDocAction extends ProtegeOWLAction {
     private static final long serialVersionUID = 1L;
+    private ExportProgressPanel currentProgress;
     // as all URLs in links should be relative, this should not matter
     protected static URL DEFAULT_BASE;
 
@@ -65,32 +65,64 @@ public class ExportOWLDocAction extends ProtegeOWLAction {
         }
     }
 
+    private void removeProgress() {
+        if (currentProgress != null) {
+            currentProgress.stopTimer();
+            java.awt.Container parent = currentProgress.getParent();
+            if (parent != null) {
+                parent.remove(currentProgress);
+                parent.revalidate();
+                parent.repaint();
+            }
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         final File folder = UIUtil.chooseFolder(getOWLWorkspace(), "Select a base for OWLDoc");
-        if (folder != null){
-            final BackgroundTask exportTask = ProtegeApplication.getBackgroundTaskManager().startTask("Exporting OWLDoc");
-            Runnable export = new Runnable(){
-                @Override
-                public void run() {
-                    try {
-                        OWLServer svr = new ProtegeServerImpl(getOWLModelManager());
-                        OWLHTMLKit owlhtmlKit = new OWLHTMLKitImpl("owldoc-kit", svr, DEFAULT_BASE);
-                        OntologyExporter exporter = new OntologyExporter(owlhtmlKit);
-                        File index = exporter.export(folder);
-                        ProtegeApplication.getBackgroundTaskManager().endTask(exportTask);
-                        NativeBrowserLauncher.openURL("file://" + index.getPath());
-                        svr.dispose();
-                    }
-                    catch (Throwable e) {
-                        ErrorLogPanel.showErrorDialog(e);
-                    }
+        if (folder == null) return;
+        removeProgress();
+        final ExportProgressPanel panel = new ExportProgressPanel(this::removeProgress);
+        currentProgress = panel;
+        getOWLWorkspace().getStatusArea().ifPresent(area -> {
+            area.add(panel, 0);
+            area.revalidate();
+            area.repaint();
+        });
+        setEnabled(false);
+        ProtegeApplication.getBackgroundTaskManager().startTask(panel);
+        Thread worker = new Thread(() -> {
+            OWLServer server = null;
+            File index = null;
+            Throwable failure = null;
+            try {
+                server = new ProtegeServerImpl(getOWLModelManager());
+                OWLHTMLKit kit = new OWLHTMLKitImpl("owldoc-kit", server, DEFAULT_BASE);
+                OntologyExporter exporter = new OntologyExporter(kit);
+                exporter.setProgressListener(panel);
+                index = exporter.export(folder);
+            } catch (CancellationException cancelled) {
+                failure = cancelled;
+            } catch (Throwable exception) {
+                failure = exception;
+                Logger.getLogger(ExportOWLDocAction.class).error("OWLDoc export failed", exception);
+            } finally {
+                try {
+                    if (server != null) server.dispose();
+                } catch (Throwable exception) {
+                    if (failure == null) failure = exception;
+                    Logger.getLogger(ExportOWLDocAction.class).error("Could not dispose OWLDoc export server", exception);
                 }
-            };
-
-            Thread exportThread = new Thread(export, "Export OWLDoc");
-            exportThread.start();
-        }
+                final File result = failure == null ? index : null;
+                final Throwable error = failure;
+                SwingUtilities.invokeLater(() -> {
+                    ProtegeApplication.getBackgroundTaskManager().endTask(panel);
+                    panel.finish(result, error);
+                    setEnabled(true);
+                });
+            }
+        }, "Export OWLDoc");
+        worker.start();
     }
 
     @Override
@@ -100,6 +132,7 @@ public class ExportOWLDocAction extends ProtegeOWLAction {
 
     @Override
     public void dispose() {
-        // do nothing
+        if (currentProgress != null) currentProgress.requestCancellation();
+        removeProgress();
     }
 }

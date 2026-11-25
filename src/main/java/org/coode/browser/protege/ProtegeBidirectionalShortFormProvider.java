@@ -53,6 +53,16 @@ public class ProtegeBidirectionalShortFormProvider implements BidirectionalShort
 
 
     @Override
+    public java.util.stream.Stream<OWLEntity> entities(String s) {
+        return getEntities(s).stream();
+    }
+
+    @Override
+    public java.util.stream.Stream<String> shortForms() {
+        return getShortForms().stream();
+    }
+
+    @Override
     public OWLEntity getEntity(String s) {
         for (OWLEntity entity : mngr.getOWLEntityFinder().getMatchingOWLEntities(s)){
             return entity;

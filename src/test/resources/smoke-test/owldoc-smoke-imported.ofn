@@ -1,0 +1,6 @@
+Prefix(:=<http://example.org/imported#>)
+Ontology(<http://example.org/owldoc/imported>
+ Declaration(Class(:Animal))
+ Declaration(Class(:Mammal))
+ SubClassOf(:Mammal :Animal)
+)

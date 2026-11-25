@@ -1,0 +1,15 @@
+OWLDoc incorporates source code from the Ontology Browser project:
+https://github.com/co-ode-owl-plugins/ontology-browser
+Source revision: c653faacd22128a22292ce8184ce510e0c0233f7
+
+The ontology-management (owlmanager) and HTML-rendering/export (owlhtml)
+packages are maintained as part of OWLDoc. The servlet-based owlbrowser module,
+legacy bundled libraries, and logging configuration are not incorporated.
+
+Original copyright and license notices are retained in the source files,
+including University of Manchester / Nick Drummond notices and file-specific
+LGPL or Mozilla Public License notices. Subsequent modernization and export
+changes are recorded in the source project's history and the OWLDoc history.
+OWLDoc's LGPL license text is included in META-INF/LICENSE; source artifacts
+include the retained per-file notices. No binary Maven dependency on Ontology
+Browser is required to build or run this plugin.
