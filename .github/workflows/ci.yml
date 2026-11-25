@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v5
         with:
           repository: co-ode-owl-plugins/ontology-browser
-          ref: e06ba47959176ef4eb261d8efe65c384a979276a
+          ref: c653faacd22128a22292ce8184ce510e0c0233f7
           path: ontology-browser
       - uses: actions/setup-java@v5
         with:
